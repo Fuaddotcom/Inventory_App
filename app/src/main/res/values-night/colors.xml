@@ -18,14 +18,14 @@
     <color name="gruvbox_bright_aqua">#8ec07c</color>
     <color name="gruvbox_bright_orange">#fe8019</color>
 
-    <color name="colorPrimary">@color/gruvbox_light1</color>
-    <color name="colorPrimaryVariant">@color/gruvbox_light2</color>
-    <color name="colorOnPrimary">@color/gruvbox_dark0_hard</color>
+    <color name="colorPrimary">@color/gruvbox_dark1</color>
+    <color name="colorPrimaryVariant">@color/gruvbox_dark2</color>
+    <color name="colorOnPrimary">@color/gruvbox_light0_hard</color>
     <color name="colorSecondary">@color/gruvbox_bright_blue</color>
     <color name="colorSecondaryVariant">@color/gruvbox_bright_aqua</color>
-    <color name="colorOnSecondary">@color/gruvbox_dark0_hard</color>
-    <color name="android_windowBackground">@color/gruvbox_light0</color>
-    <color name="textColorPrimary">@color/gruvbox_dark0</color>
-    <color name="textColorSecondary">@color/gruvbox_dark3</color>
-    <color name="colorAccent">@color/gruvbox_bright_green</color>
+    <color name="colorOnSecondary">@color/gruvbox_light0_hard</color>
+    <color name="android_windowBackground">@color/gruvbox_dark0</color>
+    <color name="textColorPrimary">@color/gruvbox_light0</color>
+    <color name="textColorSecondary">@color/gruvbox_light3</color>
+    <color name="colorAccent">@color/gruvbox_bright_yellow</color>
 </resources>
