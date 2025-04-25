@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "40401298274-4h19gfav5sqok4ffqr0houvs9s0g3pon.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.TI23B1.inventoryapp",
+            "certificate_hash": "ff5217b593ff89ea6a752b6df6e7c28bbce58272"
+          }
+        },
+        {
           "client_id": "40401298274-c3fcdjdon1e15c8f1qeccjp6n45ni7gl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

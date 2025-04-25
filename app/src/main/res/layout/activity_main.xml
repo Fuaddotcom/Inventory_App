@@ -43,12 +43,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/item_2" />
+        android:contentDescription="@string/inventory_log_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_2"
+            android:text="@string/inventory_log"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -64,12 +64,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/item_3" />
+        android:contentDescription="@string/outgoing_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_3"
+            android:text="@string/outgoing"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -85,12 +85,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/item_4" />
+        android:contentDescription="@string/incoming_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_4"
+            android:text="@string/incoming"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -106,12 +106,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/item_5" />
+        android:contentDescription="@string/logout_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_5"
+            android:text="@string/logout"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -127,12 +127,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/item_6" />
+        android:contentDescription="@string/settings_desc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_6"
+            android:text="@string/settings"
             android:textSize="16sp" />
 
     </LinearLayout>

@@ -8,6 +8,15 @@
     <string name="outgoing">Outgoing</string>
     <string name="incoming_image">Incoming Image</string>
     <string name="outgoing_image">Outgoing Image</string>
-    <string name="qr_scan_button">QR_Scan_Input</string>
+    <string name="qr_scan_button">QR Scan Input</string>
     <string name="qr_scan_text">QR Scan</string>
+    <string name="inventory_log">Inventory Log</string>
+    <string name="inventory_log_desc">Inventory Log</string>
+    <string name="outgoing_desc">Outgoing</string>
+    <string name="incoming_desc">Incoming Desc</string>
+    <string name="logout_desc">Logout desc</string>
+    <string name="logout">Logout</string>
+    <string name="settings_desc">settings desc</string>
+    <string name="settings">Settings</string>
+    <string name="scan_qr">Scan QR</string>
 </resources>

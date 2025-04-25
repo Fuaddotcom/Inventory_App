@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".CargoDetailsActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginBottom="20dp"
+        android:text="Informasi Cargo"/>
+
+    <TextView
+        android:id="@+id/cargoIdTV"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        />
+
+    <TextView
+        android:id="@+id/cargoTypeTV"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        />
+
+
+    <TextView
+        android:id="@+id/cargoLocTV"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        />
+
+
+    <TextView
+        android:id="@+id/cargoShelfTV"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        />
+
+
+</LinearLayout>
