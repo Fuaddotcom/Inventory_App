@@ -8,4 +8,6 @@
     <string name="outgoing">Outgoing</string>
     <string name="incoming_image">Incoming Image</string>
     <string name="outgoing_image">Outgoing Image</string>
+    <string name="qr_scan_button">QR_Scan_Input</string>
+    <string name="qr_scan_text">QR Scan</string>
 </resources>
