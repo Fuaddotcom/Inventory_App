@@ -2,7 +2,7 @@
 *Internal deployment only | Android 8.0+*  
 
 ## Overview  
-Real-time cargo tracking system for large warehouses using RFID. Built for **{Your Company Name}** employees.  
+Real-time cargo tracking system for large warehouses using RFID. Built for employees.  
 
 ## Core Features  
 - [ ] QR In/Out Scanning  
