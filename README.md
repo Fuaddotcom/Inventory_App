@@ -23,10 +23,10 @@ Real-time cargo tracking system for large warehouses using RFID. Built for **{Yo
 ## Development Setup  
 ```kotlin  
 // Clone repo  
-git clone https://github.com/{your-org}/warehouse-inventory-android.git  
+git clone https://github.com/RhapsodyInBlueMelody/Inventory_App.git  
 
 // Required:  
-- Android Studio Arctic Fox+  
+- Android Studio Nougat
 - Minimum JDK 11  
 - RFID Scanner API Key (stored in local.properties)
 ```
