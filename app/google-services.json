@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "40401298274",
+    "firebase_url": "https://inventory-app-29fc2-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "inventory-app-29fc2",
     "storage_bucket": "inventory-app-29fc2.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.TI23B1.inventoryapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "40401298274-c3fcdjdon1e15c8f1qeccjp6n45ni7gl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.TI23B1.inventoryapp",
+            "certificate_hash": "164899996b36cc86ba40b3aef617060c8835c5d3"
+          }
+        },
+        {
+          "client_id": "40401298274-6isjj2uchkmi6p7jr7l6hbj0egcu3480.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAc797mB7TkZt4E2g1JCMm45zGYG0_rJrM"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40401298274-6isjj2uchkmi6p7jr7l6hbj0egcu3480.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

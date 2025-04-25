@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">GudangQu</string>
     <string name="loginButton">Login</string>
+    <string name="default_web_client_id">40401298274-6isjj2uchkmi6p7jr7l6hbj0egcu3480.apps.googleusercontent.com</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="incoming">Incoming</string>
+    <string name="outgoing">Outgoing</string>
+    <string name="incoming_image">Incoming Image</string>
+    <string name="outgoing_image">Outgoing Image</string>
 </resources>
