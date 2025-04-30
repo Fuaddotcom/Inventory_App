@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,7 +27,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
 
-    private val TAG = "GoogleSignIn"
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
     private lateinit var userControl: UserControl
@@ -59,7 +61,6 @@ class LoginActivity : AppCompatActivity() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 handleSignInResult(task)
             } else {
-                Log.e(TAG, "Google sign in failed with result code: ${result.resultCode}")
                 Toast.makeText(this, "Google Sign-in failed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -79,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
             loginWithEmail()
         }
 
-        findViewById<TextView>(R.id.tvRegister).setOnClickListener {
+        findViewById<TextView>(R.id.textViewRegister).setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
@@ -92,7 +93,6 @@ class LoginActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            Log.d(TAG, "handleSignInResult:success " + account?.idToken)
 
             // Send Google ID token to Firebase via UserControl
             account?.idToken?.let {
@@ -102,17 +102,15 @@ class LoginActivity : AppCompatActivity() {
                         navigateToMainActivity()
                         finish()
                     } else {
-                        Toast.makeText(this, "Authentication failed: ${exception?.message}",
+                        Toast.makeText(this, "Authentication gagal: ${exception?.message}",
                             Toast.LENGTH_SHORT).show()
                     }
                 }
             } ?: run {
-                Log.e(TAG, "Google ID token is null.")
                 Toast.makeText(this, "Google Sign-in failed: Missing token", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
-            Toast.makeText(this, "Google Sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Google Sign-in gagal: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 

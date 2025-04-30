@@ -13,7 +13,8 @@ data class User(
     val namaLengkapUser: String = "",
     val emailUser: String = "",
     val passwordUser: String = "",
-    val statusUser: String = ""
+    val statusUser: String = "",
+    val role: String = ""
 )
 
 class UserControl {
@@ -86,7 +87,8 @@ class UserControl {
                             namaLengkapUser = fullName,
                             emailUser = email,
                             passwordUser = "", // Don't store actual password
-                            statusUser = "active"
+                            statusUser = "active",
+                            role = "pegawai"
                         )
 
                         onComplete(firebaseUser, null)
@@ -123,7 +125,8 @@ class UserControl {
         namaLengkapUser: String,
         emailUser: String,
         passwordUser: String = "",
-        statusUser: String = "active"
+        statusUser: String = "active",
+        role: String = "pegawai"
     ) {
         val user = User(
             userId = userId,

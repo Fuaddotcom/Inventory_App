@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatCallback
 import com.google.gson.Gson
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
-import com.google.gson.annotations.SerializedName
+
+
 
 
 

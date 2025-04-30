@@ -1,140 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="2"
-    android:rowCount="3"
-    android:useDefaultMargins="true"
-    tools:context=".MainActivity">
+    android:background="@color/gruvbox_light0"
+    tools:context=".MainActivity"
+    android:id="@+id/main">
 
-    <LinearLayout
-        android:id="@+id/qrScanButtonLayout" android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="@color/gruvbox_bright_red">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_move_to_inbox_24"
-            android:contentDescription="@string/qr_scan_button" />
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gruvbox_bright_orange" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/qr_scan_text"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="@color/gruvbox_bright_green"> <ImageView
+    <TextView
+        android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/inventory_log_desc" />
+        android:layout_marginTop="16dp"
+        android:text="My Gudang Qu"
+        android:textColor="@color/gruvbox_bright_orange"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/inventory_log"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="#9400D3"> <ImageView
+    <TextView
+        android:id="@+id/menuTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/outgoing_desc" />
+        android:layout_marginTop="24dp"
+        android:text="Pilihan Menu :"
+        android:textColor="@color/gruvbox_dark0"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appName" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/outgoing"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/barangMasukButton"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="#3CB371"> <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/incoming_desc" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/gruvbox_bright_orange"
+        android:paddingVertical="16dp"
+        android:text="BARANG MASUK"
+        android:textColor="@color/gruvbox_light0"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuTitle" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/incoming"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/barangKeluarButton"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="#FF6347"> <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/logout_desc" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/gruvbox_bright_orange"
+        android:paddingVertical="16dp"
+        android:text="BARANG KELUAR"
+        android:textColor="@color/gruvbox_light0"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barangMasukButton" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/logout"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/laporanButton"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="#8FBC8F"> <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_move_to_inbox_24"
-        android:contentDescription="@string/settings_desc" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/gruvbox_bright_orange"
+        android:paddingVertical="16dp"
+        android:text="LAPORAN"
+        android:textColor="@color/gruvbox_light0"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barangKeluarButton" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings"
-            android:textSize="16sp" />
+    <Button
+        android:id="@+id/manajemenBarangSupplierButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/gruvbox_bright_orange"
+        android:paddingVertical="16dp"
+        android:text="MANAJEMEN BARANG &amp; SUPPLIER"
+        android:textAlignment="center"
+        android:textColor="@color/gruvbox_light0"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/laporanButton" />
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/manajemenPenggunaButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/gruvbox_bright_orange"
+        android:paddingVertical="16dp"
+        android:text="MANAJEMEN PENGGUNA"
+        android:textColor="@color/gruvbox_light0"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manajemenBarangSupplierButton" />
 
-</GridLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

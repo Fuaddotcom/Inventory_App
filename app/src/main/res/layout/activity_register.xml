@@ -21,8 +21,6 @@
             android:id="@+id/Logo"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:contentDescription="@string/app_logo"
-            android:src="@drawable/ic_store"
             app:tint="#D2691E" />
 
         <TextView
@@ -212,7 +210,7 @@
         app:layout_constraintTop_toBottomOf="@+id/etPasswordConfirm" />
 
     <TextView
-        android:id="@+id/tvLoginInfo"
+        android:id="@+id/tvLoginLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
