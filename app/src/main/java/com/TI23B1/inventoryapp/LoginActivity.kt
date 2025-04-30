@@ -27,18 +27,18 @@ class LoginActivity : AppCompatActivity() {
     private val TAG = "GoogleSignIn"
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-    private lateinit var auth: FirebaseAuth
+    private lateinit var userControl: UserControl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_login)
 
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
+        // Initialize UserControl
+        userControl = UserControl()
 
         // Check if the user is already signed in
-        val currentUser = auth.currentUser
+        val currentUser = userControl.getCurrentUser()
         if (currentUser != null) {
             // User is signed in, proceed to the next activity
             navigateToMainActivity()
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // Request ID token
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
@@ -61,7 +61,6 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 Log.e(TAG, "Google sign in failed with result code: ${result.resultCode}")
                 Toast.makeText(this, "Google Sign-in failed", Toast.LENGTH_SHORT).show()
-                updateUI(null)
             }
         }
 
@@ -75,8 +74,14 @@ class LoginActivity : AppCompatActivity() {
             signIn()
         }
 
-        // We no longer need to check for the last signed-in Google account here
-        // because Firebase Auth state is the source of truth.
+        // Add email/password login button handlers here
+        findViewById<Button>(R.id.btnLogin).setOnClickListener {
+            loginWithEmail()
+        }
+
+        findViewById<TextView>(R.id.tvRegister).setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
     }
 
     private fun signIn() {
@@ -89,55 +94,56 @@ class LoginActivity : AppCompatActivity() {
             val account = completedTask.getResult(ApiException::class.java)
             Log.d(TAG, "handleSignInResult:success " + account?.idToken)
 
-            // Send Google ID token to Firebase
+            // Send Google ID token to Firebase via UserControl
             account?.idToken?.let {
-                firebaseAuthWithGoogle(it)
+                userControl.firebaseAuthWithGoogle(it, account) { user, exception ->
+                    if (user != null) {
+                        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                        navigateToMainActivity()
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Authentication failed: ${exception?.message}",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
             } ?: run {
                 Log.e(TAG, "Google ID token is null.")
-                updateUI(null)
+                Toast.makeText(this, "Google Sign-in failed: Missing token", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            // Google Sign In failed, update UI appropriately
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
-            updateUI(null)
+            Toast.makeText(this, "Google Sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "firebaseAuthWithGoogle:success")
-                    val user = auth.currentUser
-                    updateUI(user) // Update UI with FirebaseUser object
-                    // Proceed to your main activity
-                    Toast.makeText(this, "Firebase Authentication successful!", Toast.LENGTH_SHORT).show()
-                    navigateToMainActivity()
-                    finish() // Important: Close the LoginActivity
-                } else {
-                    // If sign in fails, display a message to the user
-                    Log.w(TAG, "firebaseAuthWithGoogle:failure", task.exception)
-                    Toast.makeText(this, "Firebase Authentication failed.", Toast.LENGTH_SHORT).show()
-                    updateUI(null)
-                }
-            }
-    }
+    private fun loginWithEmail() {
+        val email = findViewById<EditText>(R.id.etEmail).text.toString().trim()
+        val password = findViewById<EditText>(R.id.etPassword).text.toString().trim()
 
-    private fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            Log.d(TAG, "Firebase User UID: ${user.uid}, Email: ${user.email}")
-            // You can update your UI to reflect the logged-in state if needed here.
-            // However, since we are immediately navigating, this might not be necessary.
-        } else {
-            // Update your UI to show the user is not logged in
-            Toast.makeText(this, "Not signed in.", Toast.LENGTH_SHORT).show()
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Display progress indicator
+        // progressBar.visibility = View.VISIBLE
+
+        userControl.loginWithEmailPassword(email, password) { user, exception ->
+            // progressBar.visibility = View.GONE
+
+            if (user != null) {
+                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                navigateToMainActivity()
+                finish()
+            } else {
+                Toast.makeText(this, "Login failed: ${exception?.message}",
+                    Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java) // Replace MainActivity with your actual next activity
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }
