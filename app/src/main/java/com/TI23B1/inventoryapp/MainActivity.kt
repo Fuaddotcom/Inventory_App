@@ -1,57 +1,52 @@
 package com.TI23B1.inventoryapp
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.gson.annotations.SerializedName
-
+import androidx.core.view.WindowCompat
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var qrScanner: QRScanner
+
     private lateinit var databaseInventory: DatabaseInventory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false) // This replaces enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        // Initialize DatabaseInventory
         databaseInventory = DatabaseInventory()
 
-        qrScanner = QRScanner(this) { cargoInfo ->
-            val intent = Intent(this, CargoDetailsActivity::class.java)
-            intent.putExtra("cargoId", cargoInfo.cargoId)
-            intent.putExtra("type", cargoInfo.type)
-            intent.putExtra("namaPemilik", cargoInfo.namaPemilik)
-            intent.putExtra("tanggalMasuk", cargoInfo.tanggalMasuk)
-            intent.putExtra("status", cargoInfo.status)
-            intent.putExtra("quantity", cargoInfo.quantity)
-            intent.putExtra("location", cargoInfo.location)
-            intent.putExtra("shelf", cargoInfo.shelf)
-            startActivity(intent)
-        }
+        // Initialize QR Scanner with success callback
 
 
-        val qrscanbarcodebutton = findViewById<Button>(R.id.barangMasukButton)
-        qrscanbarcodebutton.setOnClickListener {
-            qrScanner.startQRScan()
+
+        val ActivityBarangMasuk = findViewById<Button>(R.id.barangMasukButton)
+        ActivityBarangMasuk.setOnClickListener {
+            val intent = Intent(this, BarangMasuk::class.java)
+            startActivity(intent);
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        val ActivityBarangKeluar = findViewById<Button>(R.id.barangKeluarButton)
+        ActivityBarangKeluar.setOnClickListener {
+            val intent = Intent(this, BarangKeluar::class.java)
+            startActivity(intent);
         }
+
+        // You could also have other buttons for different functions
+        // For example, view all cargo button:
+//        val viewAllButton = findViewById<Button>(R.id.viewAllButton)
+//        viewAllButton.setOnClickListener {
+//            databaseInventory.getAllCargo { cargoList ->
+//                val intent = Intent(this, CargoListActivity::class.java)
+//                // You'd need to make CargoInfo Parcelable or Serializable to pass the list
+//                // Or use a singleton pattern to hold the data temporarily
+//                startActivity(intent)
+//            }
+//        }
     }
-
-
-
 }

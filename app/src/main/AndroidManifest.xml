@@ -20,6 +20,12 @@
         android:theme="@style/Theme.InventoryApp"
         tools:targetApi="31">
         <activity
+            android:name=".BarangKeluar"
+            android:exported="false" />
+        <activity
+            android:name=".BarangMasuk"
+            android:exported="false" />
+        <activity
             android:name=".CargoDetailsActivity"
             android:exported="false" />
         <activity

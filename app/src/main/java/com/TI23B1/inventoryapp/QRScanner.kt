@@ -2,49 +2,43 @@ package com.TI23B1.inventoryapp
 
 import android.app.Activity
 import android.content.Intent
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatCallback
-import com.google.gson.Gson
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
+import com.google.zxing.integration.android.IntentIntegrator
 
+class QRScanner(
+    private val activity: AppCompatActivity,
+    private val onScanSuccess: (String?) -> Unit // Changed callback to String?
+) {
+    // QR code scanner launcher
+    private val barcodeLauncher: ActivityResultLauncher<Intent> = activity.registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val scanResult = IntentIntegrator.parseActivityResult(result.resultCode, result.data)
 
-
-
-
-class QRScanner(private val activity: AppCompatActivity, private val callback: (CargoInfo) -> Unit) {
-    private lateinit var barcodeLauncher: ActivityResultLauncher<ScanOptions>
-
-    init {
-        initializeBarcodeLauncher()
-    }
-
-    private fun initializeBarcodeLauncher() {
-        barcodeLauncher = activity.registerForActivityResult(ScanContract()) { result ->
-            if (result.contents == null) {
-                Toast.makeText(activity, "Canceled", Toast.LENGTH_LONG).show()
+            if (scanResult != null && scanResult.contents != null) {
+                onScanSuccess(scanResult.contents)
             } else {
-                val scannedData = result.contents
-                try {
-                    val gson = Gson()
-                    val cargoInfo = gson.fromJson(scannedData, CargoInfo::class.java)
-                    callback(cargoInfo)
-
-                } catch (e: Exception) {
-                    Toast.makeText(activity, "Invalid Cargo QR Code", Toast.LENGTH_LONG).show()
-                }
+                onScanSuccess(null)
             }
+        } else {
+            onScanSuccess(null)
         }
     }
 
+    // Start QR scanning
     fun startQRScan() {
-        val options = ScanOptions()
-        options.setPrompt("Scan a QR Code")
-        options.setBeepEnabled(true)
-        options.setOrientationLocked(false)
-        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-        barcodeLauncher.launch(options)
+        val integrator = IntentIntegrator(activity)
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+        integrator.setPrompt("Scan QR Code")
+        integrator.setCameraId(0)  // Use default camera
+        integrator.setBeepEnabled(true)
+        integrator.setBarcodeImageEnabled(true)
+
+        // Use the ActivityResultLauncher instead of calling directly
+        val scanIntent = integrator.createScanIntent()
+        barcodeLauncher.launch(scanIntent)
     }
 }
