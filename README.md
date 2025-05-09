@@ -1,4 +1,4 @@
-# Warehouse Inventory Tracker (Project TI.23.BI
+# Warehouse Inventory Tracker (Project TI.23.BI)
 *Internal deployment only | Android 8.0+*  
 
 ## Overview  
