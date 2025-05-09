@@ -1,19 +1,18 @@
-# Warehouse Inventory Tracker (RFID-Based)  
+# Warehouse Inventory Tracker (Project TI.23.BI
 *Internal deployment only | Android 8.0+*  
 
 ## Overview  
-Real-time cargo tracking system for large warehouses using RFID. Built for **{Your Company Name}** employees.  
+Real-time cargo tracking system for large warehouses using QR Code. Built for employees.  
 
 ## Core Features  
-- [ ] RFID In/Out Scanning  
-- [ ] Offline Sync (SQLite → Cloud)  
+- [ ] QR Code In/Out Scanning  
+- [ ] Real-time Database (Firebase)  
 - [ ] Storage Zone Mapping (Grid UI)  
 - [ ] Unauthorized Exit Alerts  
 
 ## Tech Stack  
-- **Mobile:** Kotlin, Android SDK 26+, Retrofit, Room  
-- **Backend:** AWS EC2, PostgreSQL  
-- **RFID Hardware:** {Specify Model + SDK Docs Link}  
+- **Mobile:** Kotlin, Android SDK 26+
+- **Backend:** Firebase
 
 ## Setup (Employees)  
 1. Install via internal APK shared through Google Drive.  
@@ -23,41 +22,9 @@ Real-time cargo tracking system for large warehouses using RFID. Built for **{Yo
 ## Development Setup  
 ```kotlin  
 // Clone repo  
-git clone https://github.com/{your-org}/warehouse-inventory-android.git  
+git clone https://github.com/RhapsodyInBlueMelody/Inventory_App
 
 // Required:  
-- Android Studio Arctic Fox+  
+- Android Studio Meerkat
 - Minimum JDK 11  
-- RFID Scanner API Key (stored in local.properties)
 ```
-
-### **GitHub Project Board Configuration**  
-**Columns:**  
-1. **Backlog**  
-2. **To Do**  
-3. **In Progress**  
-4. **Code Review**  
-5. **Done**  
-
-**Automation Rules:**  
-- When issue is created, add to "To Do".  
-- When PR is opened, move to "Code Review".  
-
-**Sample High-Priority Issues (To Create):**  
-```markdown  
-### [P0] Implement RFID Scan Trigger  
-**Description:**  
-- Auto-detect RFID tags via Bluetooth when app is near warehouse entry/exit zones.  
-- Handle collision errors using EPC Gen2 anti-collision logic.  
-
-**Acceptance Criteria:**  
-- Scan success rate ≥ 90% in testing (10 tags simultaneously).  
-- Log missed scans to `errors.log`.  
-
-### [P1] Storage Zone Grid UI  
-**Description:**  
-- Interactive map showing cargo locations (zones A1, B2, etc.).  
-- Drag-and-drop support for manual repositioning (audit mode).  
-
-**Assets Needed:**  
-- Warehouse layout PNG from facility manager.  
