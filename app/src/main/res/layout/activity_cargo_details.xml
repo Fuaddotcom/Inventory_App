@@ -1,58 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     tools:context=".CargoDetailsActivity">
 
     <TextView
+        android:id="@+id/textViewCargoDetailsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:layout_marginBottom="20dp"
-        android:text="Informasi Cargo"/>
+        android:layout_marginTop="32dp"
+        android:text="Cargo Details"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/cargoIdTV"
+        android:id="@+id/textViewCargoIdLabel"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
-        android:textAlignment="textStart"
         android:layout_height="wrap_content"
-        android:text="Placeholder"
-        />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Cargo ID:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCargoDetailsTitle" />
 
     <TextView
-        android:id="@+id/cargoTypeTV"
-        android:layout_width="wrap_content"
-        android:textSize="20sp"
-        android:textAlignment="textStart"
+        android:id="@+id/cargoIdTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Placeholder"
-        />
-
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewCargoIdLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewCargoIdLabel"
+        tools:text="ABC12345" />
 
     <TextView
-        android:id="@+id/cargoLocTV"
+        android:id="@+id/textViewTypeLabel"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
-        android:textAlignment="textStart"
         android:layout_height="wrap_content"
-        android:text="Placeholder"
-        />
-
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Type:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCargoIdLabel" />
 
     <TextView
-        android:id="@+id/cargoShelfTV"
-        android:layout_width="wrap_content"
-        android:textSize="20sp"
-        android:textAlignment="textStart"
+        android:id="@+id/typeTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Placeholder"
-        />
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewTypeLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewTypeLabel"
+        tools:text="Electronics" />
 
+    <TextView
+        android:id="@+id/textViewNamaPemilikLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Owner:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTypeLabel" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/namaPemilikTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewNamaPemilikLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewNamaPemilikLabel"
+        tools:text="PT Maju Jaya" />
+
+    <TextView
+        android:id="@+id/textViewTanggalMasukLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Arrival Date:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNamaPemilikLabel" />
+
+    <TextView
+        android:id="@+id/tanggalMasukTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewTanggalMasukLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewTanggalMasukLabel"
+        tools:text="2025-04-28" />
+
+    <TextView
+        android:id="@+id/textViewStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Status:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTanggalMasukLabel" />
+
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewStatusLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewStatusLabel"
+        tools:text="In Warehouse" />
+
+    <TextView
+        android:id="@+id/textViewQuantityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Quantity:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewStatusLabel" />
+
+    <TextView
+        android:id="@+id/quantityTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewQuantityLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewQuantityLabel"
+        tools:text="100" />
+
+    <TextView
+        android:id="@+id/textViewLocationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Location:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewQuantityLabel" />
+
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewLocationLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewLocationLabel"
+        tools:text="Warehouse A" />
+
+    <TextView
+        android:id="@+id/textViewShelfLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Shelf:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLocationLabel" />
+
+    <TextView
+        android:id="@+id/shelfTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewShelfLabel"
+        app:layout_constraintTop_toTopOf="@+id/textViewShelfLabel"
+        tools:text="A12" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

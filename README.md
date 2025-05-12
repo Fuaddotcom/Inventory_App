@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Warehouse Inventory Tracker (QR-Based)  
 *Internal deployment only | Android 8.0+*  
 
@@ -7,13 +8,29 @@ Real-time cargo tracking system for large warehouses using RFID. Built for emplo
 ## Core Features  
 - [ ] QR In/Out Scanning  
 - [ ] Offline Sync (SQLite → Cloud)  
+=======
+# Warehouse Inventory Tracker (Project TI.23.BI)
+*Internal deployment only | Android 8.0+*  
+
+## Overview  
+Real-time cargo tracking system for large warehouses using QR Code. Built for employees.  
+
+## Core Features  
+- [ ] QR Code In/Out Scanning  
+- [ ] Real-time Database (Firebase)  
+>>>>>>> d58c4e3e1fea7842996d7b5d3333d2e7f34802f0
 - [ ] Storage Zone Mapping (Grid UI)  
 - [ ] Unauthorized Exit Alerts  
 
 ## Tech Stack  
+<<<<<<< HEAD
 - **Mobile:** Kotlin, Android SDK 23+,
 - **Backend:** Firebase
 - **QR Hardware:**
+=======
+- **Mobile:** Kotlin, Android SDK 26+
+- **Backend:** Firebase
+>>>>>>> d58c4e3e1fea7842996d7b5d3333d2e7f34802f0
 
 ## Setup (Employees)  
 1. Install via internal APK shared through Google Drive.  
@@ -23,41 +40,16 @@ Real-time cargo tracking system for large warehouses using RFID. Built for emplo
 ## Development Setup  
 ```kotlin  
 // Clone repo  
+<<<<<<< HEAD
 git clone https://github.com/RhapsodyInBlueMelody/Inventory_App.git  
 
 // Required:  
 - Android Studio Nougat
+=======
+git clone https://github.com/RhapsodyInBlueMelody/Inventory_App
+
+// Required:  
+- Android Studio Meerkat
+>>>>>>> d58c4e3e1fea7842996d7b5d3333d2e7f34802f0
 - Minimum JDK 11  
-- RFID Scanner API Key (stored in local.properties)
 ```
-
-### **GitHub Project Board Configuration**  
-**Columns:**  
-1. **Backlog**  
-2. **To Do**  
-3. **In Progress**  
-4. **Code Review**  
-5. **Done**  
-
-**Automation Rules:**  
-- When issue is created, add to "To Do".  
-- When PR is opened, move to "Code Review".  
-
-**Sample High-Priority Issues (To Create):**  
-```markdown  
-### [P0] Implement RFID Scan Trigger  
-**Description:**  
-- Auto-detect RFID tags via Bluetooth when app is near warehouse entry/exit zones.  
-- Handle collision errors using EPC Gen2 anti-collision logic.  
-
-**Acceptance Criteria:**  
-- Scan success rate ≥ 90% in testing (10 tags simultaneously).  
-- Log missed scans to `errors.log`.  
-
-### [P1] Storage Zone Grid UI  
-**Description:**  
-- Interactive map showing cargo locations (zones A1, B2, etc.).  
-- Drag-and-drop support for manual repositioning (audit mode).  
-
-**Assets Needed:**  
-- Warehouse layout PNG from facility manager.  

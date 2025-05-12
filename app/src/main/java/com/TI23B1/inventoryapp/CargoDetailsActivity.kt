@@ -1,38 +1,35 @@
 package com.TI23B1.inventoryapp
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 
 class CargoDetailsActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_cargo_details)
 
-        val cargoId = intent.getStringExtra("cargoId")
-        val type = intent.getStringExtra("type")
-        val location = intent.getStringExtra("location")
-        val shelf = intent.getStringExtra("shelf")
+        // Get cargo info from intent
+        val cargoId = intent.getStringExtra("cargoId") ?: ""
+        val type = intent.getStringExtra("type") ?: ""
+        val owner = intent.getStringExtra("namaPemilik") ?: ""
+        val date = intent.getStringExtra("tanggalMasuk") ?: ""
+        val status = intent.getStringExtra("status") ?: ""
+        val quantity = intent.getIntExtra("quantity", 0)
+        val location = intent.getStringExtra("location") ?: ""
+        val shelf = intent.getStringExtra("shelf") ?: ""
 
-        val cargoIdView = findViewById<TextView>(R.id.cargoIdTV)
-        val cargoTypeView = findViewById<TextView>(R.id.cargoTypeTV)
-        val cargoLocView = findViewById<TextView>(R.id.cargoLocTV)
-        val cargoShelfView = findViewById<TextView>(R.id.cargoShelfTV)
-
-        cargoIdView.text = "ID:" + cargoId
-        cargoTypeView.text = "Tipe: " + type
-        cargoLocView.text = "Lokasi: " + location
-        cargoShelfView.text = "Penyimpanan: " + shelf
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        // Display cargo information in the UI
+        findViewById<TextView>(R.id.cargoIdTextView).text = "Cargo ID: $cargoId"
+        findViewById<TextView>(R.id.typeTextView).text = "Type: $type"
+        findViewById<TextView>(R.id.namaPemilikTextView).text = "Owner: $owner"
+        findViewById<TextView>(R.id.tanggalMasukTextView).text = "Date: $date"
+        findViewById<TextView>(R.id.statusTextView).text = "Status: $status"
+        findViewById<TextView>(R.id.quantityTextView).text = "Quantity: $quantity"
+        findViewById<TextView>(R.id.locationTextView).text = "Location: $location"
+        findViewById<TextView>(R.id.shelfTextView).text = "Shelf: $shelf"
     }
 }
