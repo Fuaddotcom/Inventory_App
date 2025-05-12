@@ -1,19 +1,19 @@
-# Warehouse Inventory Tracker (RFID-Based)  
+# Warehouse Inventory Tracker (QR-Based)  
 *Internal deployment only | Android 8.0+*  
 
 ## Overview  
-Real-time cargo tracking system for large warehouses using RFID. Built for **{Your Company Name}** employees.  
+Real-time cargo tracking system for large warehouses using RFID. Built for employees.  
 
 ## Core Features  
-- [ ] RFID In/Out Scanning  
+- [ ] QR In/Out Scanning  
 - [ ] Offline Sync (SQLite → Cloud)  
 - [ ] Storage Zone Mapping (Grid UI)  
 - [ ] Unauthorized Exit Alerts  
 
 ## Tech Stack  
-- **Mobile:** Kotlin, Android SDK 26+, Retrofit, Room  
-- **Backend:** AWS EC2, PostgreSQL  
-- **RFID Hardware:** {Specify Model + SDK Docs Link}  
+- **Mobile:** Kotlin, Android SDK 23+,
+- **Backend:** Firebase
+- **QR Hardware:**
 
 ## Setup (Employees)  
 1. Install via internal APK shared through Google Drive.  
@@ -23,10 +23,10 @@ Real-time cargo tracking system for large warehouses using RFID. Built for **{Yo
 ## Development Setup  
 ```kotlin  
 // Clone repo  
-git clone https://github.com/{your-org}/warehouse-inventory-android.git  
+git clone https://github.com/RhapsodyInBlueMelody/Inventory_App.git  
 
 // Required:  
-- Android Studio Arctic Fox+  
+- Android Studio Nougat
 - Minimum JDK 11  
 - RFID Scanner API Key (stored in local.properties)
 ```
