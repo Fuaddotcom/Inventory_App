@@ -3,45 +3,41 @@ package com.TI23B1.inventoryapp
 import com.google.firebase.database.DataSnapshot
 import java.util.HashMap
 
-data class CargoInfo(
+data class CargoOut(
     val cargoId: String = "",
-    val tanggalMasuk: String = "", // Changed to String
+    val tanggalKeluar: String = "",
     val namaBarang: String = "",
-    val namaSupplier: String = "",
-    val status: String = "",
+    val tujuanPengiriman: String = "",
     val quantity: Int = 0,
     val unit: String = "",
+    val nomorSuratJalan: String = ""
 ) {
-    // No-argument constructor for Firebase
-    constructor() : this("", "", "", "", "", 0, "")
+    constructor() : this("", "", "", "", 0, "", "")
 
-    // Convert to Map for Firebase
     fun toMap(): Map<String, Any> {
         return hashMapOf(
             "cargoId" to cargoId,
-            "tanggalMasuk" to tanggalMasuk, // Already a String, no conversion needed
+            "tanggalKeluar" to tanggalKeluar,
             "namaBarang" to namaBarang,
-            "namaSupplier" to namaSupplier,
-            "status" to status,
+            "tujuanPengiriman" to tujuanPengiriman,
             "quantity" to quantity,
             "unit" to unit,
+            "nomorSuratJalan" to nomorSuratJalan
         )
     }
 
     companion object {
-        // Create CargoInfo from Firebase DataSnapshot
-        fun fromSnapshot(snapshot: DataSnapshot): CargoInfo? {
+        fun fromSnapshot(snapshot: DataSnapshot): CargoOut? {
             val map = snapshot.value as? HashMap<*, *> ?: return null
-
             return try {
-                CargoInfo(
+                CargoOut(
                     cargoId = map["cargoId"] as? String ?: "",
-                    tanggalMasuk = map["tanggalMasuk"] as? String ?: "",
+                    tanggalKeluar = map["tanggalKeluar"] as? String ?: "",
                     namaBarang = map["namaBarang"] as? String ?: "",
-                    namaSupplier = map["namaSupplier"] as? String ?: "",
-                    status = map["status"] as? String ?: "",
+                    tujuanPengiriman = map["tujuanPengiriman"] as? String ?: "",
                     quantity = (map["quantity"] as? Long)?.toInt() ?: 0,
                     unit = map["unit"] as? String ?: "",
+                    nomorSuratJalan = map["nomorSuratJalan"] as? String ?: ""
                 )
             } catch (e: Exception) {
                 null

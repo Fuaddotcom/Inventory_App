@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.FirebaseNetworkException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -26,13 +25,13 @@ class BarangMasuk : AppCompatActivity() {
     private lateinit var kodeBarangET: EditText
     private lateinit var supplierBarangET: EditText
     private lateinit var tanggalMasukET: EditText
+    private lateinit var nomorPOED: EditText
     private lateinit var quantityValueET: EditText
     private lateinit var quantityUnitSpinner: Spinner
     private lateinit var statusResultTextView: TextView
     private var qrScanner: QRScanner? = null
     private lateinit var databaseInventory: DatabaseInventory
     private lateinit var statusResultTV: TextView
-    private lateinit var keteranganResultTV: TextView
     private lateinit var namaBarangTV: TextView
     private lateinit var kodeBarangTV: TextView
     private lateinit var supplierBarangTV: TextView
@@ -68,7 +67,7 @@ class BarangMasuk : AppCompatActivity() {
         qtyBarangTV = findViewById(R.id.quantitybarangresultTV)
         tanggalBarangTV = findViewById(R.id.tanggalBarangKeluarResultTV)
         statusResultTV = findViewById(R.id.statusResultTV)
-        keteranganResultTV= findViewById(R.id.keteranganResultTV)
+        nomorPOED = findViewById(R.id.nomorPOED)
         unitBarangTV = findViewById(R.id.unitbarangresultTV)
 
         idBarangET = findViewById(R.id.IdBarangET)
@@ -121,12 +120,11 @@ class BarangMasuk : AppCompatActivity() {
 
         saveButton = findViewById(R.id.saveButton)
         saveButton.setOnClickListener {
-            saveCargoData()
+            saveBarangMasukData() // Changed function name
         }
 
 
         resetButton = findViewById(R.id.resetButton)
-
         resetButton.setOnClickListener {
             clearInputFields()
         }
@@ -134,7 +132,7 @@ class BarangMasuk : AppCompatActivity() {
 
     private fun processScannedResult(scannedData: String) {
         try {
-            val qrInfo = gson.fromJson(scannedData, CargoInfo::class.java)
+            val qrInfo = gson.fromJson(scannedData, CargoIn::class.java)
 
             kodeBarangTV.text = qrInfo.cargoId ?: ""
             namaBarangTV.text = qrInfo.namaBarang ?: ""
@@ -160,73 +158,43 @@ class BarangMasuk : AppCompatActivity() {
         }
     }
 
-    private fun saveCargoData() {
+    private fun saveBarangMasukData() { // Changed function name
         val cargoId = kodeBarangET.text.toString().trim()
         val namaBarang = namaBarangET.text.toString().trim()
         val namaSupplier = supplierBarangET.text.toString().trim()
         val quantity = quantityValueET.text.toString().toIntOrNull() ?: 0
         val unit = quantityUnitSpinner.selectedItem.toString()
         val tanggalMasuk = tanggalMasukET.text.toString().trim()
+        val nomorPO = nomorPOED.text.toString().trim()
 
         if (cargoId.isEmpty() || namaSupplier.isEmpty() || tanggalMasuk.isEmpty()) {
-            statusResultTV.text = "Failed"
+            statusResultTV.text = "Failed: Please fill required fields"
             statusResultTV.setTextColor(resources.getColor(android.R.color.holo_red_dark, theme))
-            keteranganResultTV.text = "Please fill in required fields"
-            keteranganResultTV.setTextColor(resources.getColor(android.R.color.holo_red_dark, theme))
             return
         }
 
-        val cargo = CargoInfo(
+        val cargo = CargoIn(
             cargoId = cargoId,
             namaBarang = namaBarang,
             namaSupplier = namaSupplier,
             tanggalMasuk = tanggalMasuk,
-            status = "Incoming",
             quantity = quantity,
             unit = unit,
+            nomorPO = nomorPO
         )
 
-        databaseInventory.insertCargo(cargo) { success ->
+        databaseInventory.insertBarangMasuk(cargo) { success -> // Use the new function
             if (success) {
-                statusResultTV.text = "Success"
-                statusResultTV.setTextColor(resources.getColor(android.R.color.holo_green_dark, theme))
-                keteranganResultTV.text = "Data successfully saved"
-                keteranganResultTV.setTextColor(resources.getColor(android.R.color.holo_green_dark, theme))
-                Toast.makeText(this, "Cargo data saved successfully", Toast.LENGTH_SHORT).show()
+                statusResultTV.text = "Success: Data saved"
+                statusResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_green, theme))
+                Toast.makeText(this, "Barang Masuk data saved successfully", Toast.LENGTH_SHORT).show()
                 clearInputFields()
             } else {
-                statusResultTV.text = "Failed"
-                statusResultTV.setTextColor(resources.getColor(android.R.color.holo_red_dark, theme))
-                keteranganResultTV.text = "Failed to save data" // A general failure message initially
-                keteranganResultTV.setTextColor(resources.getColor(android.R.color.holo_red_dark, theme))
-                Toast.makeText(this, "Failed to save cargo data", Toast.LENGTH_SHORT).show()
-                // We might get more specific error information in the onFailureListener
+                statusResultTV.text = "Failed: Could not save data"
+                statusResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_red, theme))
+                Toast.makeText(this, "Failed to save Barang Masuk data", Toast.LENGTH_SHORT).show()
             }
         }
-
-        databaseInventory.cargoRef.child(cargo.cargoId).setValue(cargo.toMap())
-            .addOnSuccessListener {
-                statusResultTV.text = "Success"
-                statusResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_green, theme))
-                keteranganResultTV.text = "Data successfully saved"
-                keteranganResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_green, theme))
-                Toast.makeText(this, "Cargo data saved successfully", Toast.LENGTH_SHORT).show()
-                clearInputFields()
-            }
-            .addOnFailureListener { e ->
-                statusResultTV.text = "Failed"
-                statusResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_red, theme))
-                keteranganResultTV.setTextColor(resources.getColor(R.color.gruvbox_bright_red, theme))
-
-                if (e is FirebaseNetworkException) {
-                    keteranganResultTV.text = "No network connection. Please check your internet."
-                } else if (e.message?.contains("permission_denied") == true) {
-                    keteranganResultTV.text = "Permission denied to write to the database."
-                } else {
-                    keteranganResultTV.text = "Failed to save data. Please try again."
-                    e.printStackTrace() // Log the full error for debugging
-                }
-            }
     }
 
 

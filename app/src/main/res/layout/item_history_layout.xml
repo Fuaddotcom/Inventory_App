@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_marginVertical="2dp"
+    android:background="@drawable/rounded_light_background_secondary"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/textViewNamaBarangHistory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        android:textColor="@color/gruvbox_dark1" />
+
+    <TextView
+        android:id="@+id/textViewTanggalHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gruvbox_dark2"
+        android:textSize="12sp"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/textViewJenisHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gruvbox_bright_blue"
+        android:textStyle="italic"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/textViewQuantityHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gruvbox_bright_orange"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp" />
+
+</LinearLayout>

@@ -20,6 +20,15 @@
         android:theme="@style/Theme.InventoryApp"
         tools:targetApi="31">
         <activity
+            android:name=".ManajemenUser"
+            android:exported="false" />
+        <activity
+            android:name=".ManajemenBarangdanSupplier"
+            android:exported="false" />
+        <activity
+            android:name=".Laporan"
+            android:exported="false" />
+        <activity
             android:name=".BarangKeluar"
             android:exported="false" />
         <activity

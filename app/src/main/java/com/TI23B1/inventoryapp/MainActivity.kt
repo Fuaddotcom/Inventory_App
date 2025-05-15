@@ -15,38 +15,41 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false) // This replaces enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
         // Initialize DatabaseInventory
         databaseInventory = DatabaseInventory()
 
-        // Initialize QR Scanner with success callback
-
-
-
         val ActivityBarangMasuk = findViewById<Button>(R.id.barangMasukButton)
         ActivityBarangMasuk.setOnClickListener {
             val intent = Intent(this, BarangMasuk::class.java)
-            startActivity(intent);
+            startActivity(intent)
         }
 
         val ActivityBarangKeluar = findViewById<Button>(R.id.barangKeluarButton)
         ActivityBarangKeluar.setOnClickListener {
             val intent = Intent(this, BarangKeluar::class.java)
-            startActivity(intent);
+            startActivity(intent)
         }
 
-        // You could also have other buttons for different functions
-        // For example, view all cargo button:
-//        val viewAllButton = findViewById<Button>(R.id.viewAllButton)
-//        viewAllButton.setOnClickListener {
-//            databaseInventory.getAllCargo { cargoList ->
-//                val intent = Intent(this, CargoListActivity::class.java)
-//                // You'd need to make CargoInfo Parcelable or Serializable to pass the list
-//                // Or use a singleton pattern to hold the data temporarily
-//                startActivity(intent)
-//            }
-//        }
+        val ActivityLaporan = findViewById<Button>(R.id.laporanButton)
+        ActivityLaporan.setOnClickListener {
+            val intent = Intent(this, Laporan::class.java)
+            startActivity(intent)
+        }
+
+        val ActivityManajemenBarangdanSupplier = findViewById<Button>(R.id.manajemenBarangSupplierButton)
+        ActivityManajemenBarangdanSupplier.setOnClickListener {
+            val intent = Intent(this, ManajemenBarangdanSupplier::class.java)
+            startActivity(intent)
+        }
+
+        val ActivityManajemenUser = findViewById<Button>(R.id.manajemenPenggunaButton)
+        ActivityManajemenUser.setOnClickListener {
+            val intent = Intent(this, ManajemenUser::class.java)
+            startActivity(intent)
+        }
+
     }
 }
