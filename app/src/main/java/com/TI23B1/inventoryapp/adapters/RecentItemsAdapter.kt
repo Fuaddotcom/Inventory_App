@@ -1,8 +1,11 @@
 package com.TI23B1.inventoryapp.adapters
 
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +14,8 @@ import com.TI23B1.inventoryapp.R
 import com.TI23B1.inventoryapp.models.RecentItem
 
 class RecentItemsAdapter(
-    private val onItemClick: (RecentItem) -> Unit
+    private val onItemClick: (RecentItem) -> Unit,
+    private val onMoreOptionsClick: (RecentItem, MenuItem) -> Unit
 ) : ListAdapter<RecentItem, RecentItemsAdapter.RecentItemViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentItemViewHolder {
@@ -28,25 +32,19 @@ class RecentItemsAdapter(
     inner class RecentItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvItemName: TextView = itemView.findViewById(R.id.tv_item_name)
         private val tvItemStock: TextView = itemView.findViewById(R.id.tv_item_stock)
-        private val tvItemDate: TextView = itemView.findViewById(R.id.tv_item_date)
         private val tvItemType: TextView = itemView.findViewById(R.id.tv_item_type)
-        private val tvItemSupplier: TextView = itemView.findViewById(R.id.tv_item_supplier)
+        private val btnMoreOptions: ImageButton = itemView.findViewById(R.id.btn_more_options)
 
         fun bind(item: RecentItem) {
             tvItemName.text = item.name
             tvItemStock.text = "${item.stock} ${item.unit}"
 
-            // Show date if available, otherwise show "No date"
-            tvItemDate.text = item.date ?: "No date"
-
-            // Show type with color coding
             tvItemType.text = when (item.type) {
                 "IN" -> "Masuk"
                 "OUT" -> "Keluar"
                 else -> "Unknown"
             }
 
-            // Set type background color
             when (item.type) {
                 "IN" -> {
                     tvItemType.setBackgroundResource(R.drawable.bg_status_in)
@@ -62,17 +60,19 @@ class RecentItemsAdapter(
                 }
             }
 
-            // Show supplier only for incoming items
-            if (item.type == "IN" && item.supplier.isNotEmpty()) {
-                tvItemSupplier.visibility = View.VISIBLE
-                tvItemSupplier.text = "Supplier: ${item.supplier}"
-            } else {
-                tvItemSupplier.visibility = View.GONE
-            }
-
-            // Set click listener
             itemView.setOnClickListener {
                 onItemClick(item)
+            }
+
+            btnMoreOptions.setOnClickListener { view ->
+                val popupMenu = PopupMenu(view.context, view)
+                popupMenu.menuInflater.inflate(R.menu.item_options_menu, popupMenu.menu)
+
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    onMoreOptionsClick(item, menuItem)
+                    true
+                }
+                popupMenu.show()
             }
         }
     }

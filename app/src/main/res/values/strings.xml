@@ -37,6 +37,8 @@
     <string name="error_po_empty">Nomor PO Harus Disi!</string>
     <string name="error_so_empty">Nomor Surat Jalan Harus Disi!</string>
     <string name="toast_save_success">Data Berhasil Disimpan!</string>
+    <string name="item_image_description">Logo Produk</string>
+    <string name="more_options_description">More options</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

@@ -10,70 +10,87 @@
     android:clickable="true"
     android:focusable="true">
 
-    <LinearLayout
+    <!-- The RelativeLayout is now the direct child, allowing absolute positioning -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp"> <!-- Padding for the overall content inside the card -->
 
+        <!-- This LinearLayout contains the image and all text content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tv_item_name"
+            <ImageView
+                android:id="@+id/iv_item_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_placeholder_foreground"
+                android:contentDescription="@string/item_image_description"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Item Name"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_item_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Masuk"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:background="@drawable/bg_status_in"
-                android:textColor="@android:color/white" />
+                <TextView
+                    android:id="@+id/tv_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Item Name"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
 
+                <TextView
+                    android:id="@+id/tv_item_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Masuk"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:background="@drawable/bg_status_in"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_item_stock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15 pcs"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="4dp" />
+
+                <!-- Date and Supplier TextViews are not included, as requested -->
+
+            </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_item_stock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="15 pcs"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="4dp" />
+        <!-- ImageButton for More Options, explicitly positioned at bottom-right of the RelativeLayout -->
+        <ImageButton
+            android:id="@+id/btn_more_options"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_more_horiz"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/more_options_description"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp" />
 
-        <TextView
-            android:id="@+id/tv_item_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="6 Februari 2025"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="2dp" />
-
-        <TextView
-            android:id="@+id/tv_item_supplier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Supplier: PT. Example"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="2dp"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
