@@ -4,47 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gruvbox_light0"
     tools:context=".BarangKeluar">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp"> <LinearLayout
+        android:id="@+id/topRightContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/topRightContainer"
+        <ImageView
+            android:id="@+id/Logo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:srcCompat="@mipmap/ic_launcher_round" />
+
+        <TextView
+            android:id="@+id/appname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginTop="8dp"
+            android:text="My Gudang Qu"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/Logo"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                app:srcCompat="@mipmap/ic_launcher_round" />
-
-            <TextView
-                android:id="@+id/appname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="My Gudang Qu"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/dashboardBarangKeluar"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/rounded_edittext_side"
             android:padding="20dp"
@@ -55,39 +54,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Input Barang Keluar"
-                android:textColor="@color/gruvbox_light1"
+                android:textColor="@color/white"
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/namaBarangLabel"
-            android:layout_width="wrap_content"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/NamaBarangKeluarTIL" style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="Nama Barang"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dashboardBarangKeluar" />
-
-        <EditText
-            android:id="@+id/NamaBarangKeluarET"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="Masukkan Nama Barang"
-            android:inputType="text"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:layout_marginTop="24dp"
+            android:hint="Nama Barang"
+            app:helperText="Masukkan Nama Barang"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/namaBarangLabel"
-            tools:ignore="Autofill" />
+            app:layout_constraintTop_toBottomOf="@+id/dashboardBarangKeluar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/NamaBarangKeluarED" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/quantityLabel"
@@ -97,10 +87,9 @@
             android:layout_marginTop="16dp"
             android:text="Quantity"
             android:textSize="18sp"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/NamaBarangKeluarET" />
-
-        <LinearLayout
+            app:layout_constraintTop_toBottomOf="@+id/NamaBarangKeluarTIL" /> <LinearLayout
             android:id="@+id/quantityContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -112,29 +101,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/quantityLabel">
 
-            <EditText
-                android:id="@+id/QuantityValueED"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/QuantityValueTIL" style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/rounded_edittext"
-                android:hint="Masukkan Quantity"
-                android:inputType="number"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF"
-                tools:ignore="Autofill" />
+                android:hint="Masukkan Quantity">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/QuantityValueED" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    tools:ignore="Autofill" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <Spinner
                 android:id="@+id/QuantityUnitSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/rounded_edittext"
-                android:paddingStart="16dp"
+                android:background="@drawable/rounded_edittext" android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textColor="#FFFFFFFF" />
+                android:textColor="@color/black" />
 
         </LinearLayout>
 
@@ -146,27 +135,28 @@
             android:layout_marginTop="16dp"
             android:text="Tujuan Pengiriman"
             android:textSize="18sp"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/quantityContainer" />
 
-        <EditText
-            android:id="@+id/tujuanBarangKeluarED"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tujuanBarangKeluarTIL" style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/rounded_edittext"
             android:hint="Masukkan Tujuan Pengiriman"
-            android:inputType="text"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tujuanBarangKeluarTV"
-            tools:ignore="Autofill" />
+            app:layout_constraintTop_toBottomOf="@+id/tujuanBarangKeluarTV">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tujuanBarangKeluarED" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                tools:ignore="Autofill" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/nomorSuratJalanTV"
@@ -176,27 +166,27 @@
             android:layout_marginTop="16dp"
             android:text="Nomor Surat Jalan"
             android:textSize="18sp"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tujuanBarangKeluarED" />
-
-        <EditText
-            android:id="@+id/nomorSuratJalanED"
+            app:layout_constraintTop_toBottomOf="@+id/tujuanBarangKeluarTIL" /> <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nomorSuratJalanTIL" style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/rounded_edittext"
             android:hint="Masukkan nomor surat jalan"
-            android:inputType="text"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nomorSuratJalanTV"
-            tools:ignore="Autofill" />
+            app:layout_constraintTop_toBottomOf="@+id/nomorSuratJalanTV">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nomorSuratJalanED" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                tools:ignore="Autofill" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <Button
             android:id="@+id/saveButtonKeluar"
@@ -205,17 +195,15 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:backgroundTint="@color/gruvbox_bright_red"
+            android:backgroundTint="@color/accent_primary"
             android:paddingVertical="16dp"
             android:text="Simpan Barang Keluar"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
             android:textSize="18sp"
             app:cornerRadius="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nomorSuratJalanED" />
-
-        <TextView
+            app:layout_constraintTop_toBottomOf="@+id/nomorSuratJalanTIL" /> <TextView
             android:id="@+id/statusLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -223,6 +211,7 @@
             android:layout_marginTop="24dp"
             android:text="Status:"
             android:textSize="18sp"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/saveButtonKeluar" />
 
@@ -235,6 +224,7 @@
             android:text=""
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintBaseline_toBaselineOf="@+id/statusLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/statusLabel" />
@@ -247,28 +237,28 @@
             android:layout_marginTop="16dp"
             android:text="Tanggal Keluar"
             android:textSize="18sp"
+            android:textColor="@color/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/statusLabel" />
 
-        <EditText
-            android:id="@+id/TanggalKeluarED"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TanggalKeluarTIL" style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/rounded_edittext"
             android:hint="Pilih Tanggal Keluar"
-            android:inputType="date"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tanggalKeluarLabel"
+            app:endIconMode="clear_text"> <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/TanggalKeluarED" android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="date"
             tools:ignore="Autofill"
             android:focusableInTouchMode="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

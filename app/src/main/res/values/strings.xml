@@ -24,6 +24,19 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="hint_supplier_barang">Nama Supplier</string>
+    <string name="hint_nomor_po">Nomor PO</string>
+    <string name="hint_nama_penerima">Nama Penerima</string>
+    <string name="hint_nomor_sj">Nomor Surat Jalan</string>
+    <string name="error_nama_barang_empty">Nama Barang Harus Di Isi!</string>
+    <string name="error_tanggal_empty">Tanggal Barang Harus Di Isi!</string>
+    <string name="error_quantity_empty">Quantity Barang Harus Di Isi!</string>
+    <string name="error_unit_empty">Satuan Barang Harus Di Isi!</string>
+    <string name="error_supplier_empty">Nama Supplier Harus Di Isi!</string>
+    <string name="error_receiver_empty">Nama Penerima Harus Disi!</string>
+    <string name="error_po_empty">Nomor PO Harus Disi!</string>
+    <string name="error_so_empty">Nomor Surat Jalan Harus Disi!</string>
+    <string name="toast_save_success">Data Berhasil Disimpan!</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -62,3 +75,5 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
 </resources>
+
+

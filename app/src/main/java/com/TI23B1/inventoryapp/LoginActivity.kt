@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-    private lateinit var userControl: UserControl
+    private lateinit var userControl: UserControl // Assuming UserControl is defined elsewhere
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         // Initialize UserControl
-        userControl = UserControl()
+        userControl = UserControl() // Make sure UserControl is properly initialized or mocked for testing
 
         // Check if the user is already signed in
         val currentUser = userControl.getCurrentUser()
@@ -65,24 +65,25 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v: View, insets: WindowInsetsCompat ->
+        // FIX: Change R.id. to R.id.main_login_layout
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login_layout)) { v: View, insets: WindowInsetsCompat ->
             val systemBars = insets.getInsets(Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        findViewById<View>(R.id.sign_in_button).setOnClickListener {
+        findViewById<View>(R.id.btn_google_login).setOnClickListener {
             signIn()
         }
 
         // Add email/password login button handlers here
-        findViewById<Button>(R.id.btnLogin).setOnClickListener {
+        findViewById<Button>(R.id.btn_login).setOnClickListener {
             loginWithEmail()
         }
 
-        findViewById<TextView>(R.id.textViewRegister).setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-        }
+        // You also have a typo in etEmail and etPassword.
+        // It should be R.id.et_email and R.id.et_password based on your XML.
+        // Update the loginWithEmail function accordingly.
     }
 
     private fun signIn() {
@@ -115,15 +116,17 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginWithEmail() {
-        val email = findViewById<EditText>(R.id.etEmail).text.toString().trim()
-        val password = findViewById<EditText>(R.id.etPassword).text.toString().trim()
+        // FIX: Change R.id.etEmail to R.id.et_email
+        val email = findViewById<EditText>(R.id.et_email).text.toString().trim()
+        // FIX: Change R.id.etPassword to R.id.et_password
+        val password = findViewById<EditText>(R.id.et_password).text.toString().trim()
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Display progress indicator
+        // Display progress indicator (uncomment and implement if you have a ProgressBar)
         // progressBar.visibility = View.VISIBLE
 
         userControl.loginWithEmailPassword(email, password) { user, exception ->

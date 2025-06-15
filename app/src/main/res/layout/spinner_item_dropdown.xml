@@ -4,5 +4,4 @@
     style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gruvbox_bright_orange"
-    android:textColor="@color/gruvbox_light1" />
+    android:textColor="@color/black" />

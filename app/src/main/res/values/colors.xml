@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="gruvbox_dark0_hard">#1d2021</color> <color name="gruvbox_dark0">#282828</color>
-    <color name="gruvbox_dark1">#3c3836</color> <color name="gruvbox_dark2">#504945</color>
-    <color name="gruvbox_dark3">#665c54</color>
-    <color name="gruvbox_dark4">#7c6f64</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 
-    <color name="gruvbox_light0_hard">#f9f5d7</color> <color name="gruvbox_light0">#fdf6e3</color>
-    <color name="gruvbox_light1">#ebdbb2</color>
-    <color name="gruvbox_light2">#d5c4a1</color>
-    <color name="gruvbox_light3">#b8bb26</color>
-    <color name="gruvbox_light4">#a89984</color>
+    <color name="red_accent">#D32F2F</color>
+    <color name="red_primary">#F44336</color>
+    <color name="red_dark">#C62828</color>
+    <color name="accent_primary">#A72726</color>
+    <color name="accent_secondary">#9C2123</color>
 
-    <color name="gruvbox_bright_red">#fb4934</color>
-    <color name="gruvbox_bright_green">#b8bb26</color>
-    <color name="gruvbox_bright_yellow">#fabd2f</color>
-    <color name="gruvbox_bright_blue">#83a598</color> <color name="gruvbox_bright_purple">#d3869b</color>
-    <color name="gruvbox_bright_aqua">#8ec07c</color>
-    <color name="gruvbox_bright_orange">#fe8019</color>
+    <color name="colorPrimary">@color/red_accent</color>
+    <color name="colorPrimaryVariant">@color/red_dark</color>
+    <color name="colorOnPrimary">@color/white</color>
 
-    <color name="colorPrimary">@color/gruvbox_light1</color>
-    <color name="colorPrimaryVariant">@color/gruvbox_light2</color>
-    <color name="colorOnPrimary">@color/gruvbox_dark0_hard</color>
-    <color name="colorSecondary">@color/gruvbox_bright_blue</color>
-    <color name="colorSecondaryVariant">@color/gruvbox_bright_aqua</color>
-    <color name="colorOnSecondary">@color/gruvbox_dark0_hard</color>
-    <color name="android_windowBackground">@color/gruvbox_light0</color>
-    <color name="textColorPrimary">@color/gruvbox_dark0</color>
-    <color name="textColorSecondary">@color/gruvbox_dark3</color>
-    <color name="colorAccent">@color/gruvbox_bright_green</color>
+    <color name="bright_red">#CB0404</color>
+    <color name="bright_green">#309898</color>
+
+    <color name="colorSecondary">@color/red_accent</color>
+    <color name="colorSecondaryVariant">@color/red_dark</color>
+    <color name="colorOnSecondary">@color/white</color>
+
+    <color name="android_windowBackground">@color/white</color>
+
+    <color name="text_dark_gray">#424242</color>
+    <color name="text_input_hint">#B0B0B0</color>
+    <color name="blue_link">#2196F3</color>
+
+    <color name="bottom_nav_selected">#F44336</color>
+    <color name="bottom_nav_unselected">#999999</color>
+
+    <color name="textColorPrimary">@color/black</color> <color name="textColorSecondary">#757575</color> <color name="colorAccent">@color/red_accent</color>
 </resources>

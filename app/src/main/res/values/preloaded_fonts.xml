@@ -2,5 +2,9 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/doppio_one</item>
+        <item>@font/plus_jakarta_sans</item>
+        <item>@font/plus_jakarta_sans_bold</item>
+        <item>@font/plus_jakarta_sans_extralight</item>
+        <item>@font/plus_jakarta_sans_medium</item>
     </array>
 </resources>
