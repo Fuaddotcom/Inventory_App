@@ -14,7 +14,6 @@ import com.TI23B1.inventoryapp.R
 import com.TI23B1.inventoryapp.models.RecentItem
 
 class RecentItemsAdapter(
-    private val onItemClick: (RecentItem) -> Unit,
     private val onMoreOptionsClick: (RecentItem, MenuItem) -> Unit
 ) : ListAdapter<RecentItem, RecentItemsAdapter.RecentItemViewHolder>(DiffCallback()) {
 
@@ -60,9 +59,6 @@ class RecentItemsAdapter(
                 }
             }
 
-            itemView.setOnClickListener {
-                onItemClick(item)
-            }
 
             btnMoreOptions.setOnClickListener { view ->
                 val popupMenu = PopupMenu(view.context, view)

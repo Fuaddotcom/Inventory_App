@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".HistoryFragment">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tv_history_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Inventory History"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Search Bar (TextInputEditText inside TextInputLayout) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_search_item_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:startIconDrawable="@android:drawable/ic_search_category_default"
+        app:hintEnabled="true"
+        app:layout_constraintTop_toBottomOf="@id/tv_history_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_search_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search by item name..."
+            android:singleLine="true"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Filter Controls (RadioGroup and Reset Button) -->
+    <LinearLayout
+        android:id="@+id/ll_filter_controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/til_search_item_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RadioGroup
+            android:id="@+id/rg_item_type_filter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="start"> <!-- Align radio buttons to start -->
+
+            <RadioButton
+                android:id="@+id/rb_filter_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:checked="true"
+                android:layout_marginEnd="8dp" /> <!-- Reduced margin to save space -->
+
+            <RadioButton
+                android:id="@+id/rb_filter_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Incoming"
+                android:layout_marginEnd="8dp" />
+
+            <RadioButton
+                android:id="@+id/rb_filter_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Outgoing" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btn_reset_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        />
+
+    </LinearLayout>
+
+    <!-- RecyclerView for History Items -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_history_items"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_recent"
+        app:layout_constraintTop_toBottomOf="@id/ll_filter_controls"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

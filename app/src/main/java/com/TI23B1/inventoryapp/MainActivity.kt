@@ -1,61 +1,85 @@
+// com/TI23B1/inventoryapp/MainActivity.kt
 package com.TI23B1.inventoryapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.TI23B1.inventoryapp.dialogs.AddInventoryDialog // Make sure this import is correct
+import androidx.viewpager2.widget.ViewPager2
+import com.TI23B1.inventoryapp.dialogs.AddInventoryDialog
+import com.TI23B1.inventoryapp.fragments.HistoryFragment
 import com.TI23B1.inventoryapp.fragments.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+// import com.google.firebase.database.FirebaseDatabase // No longer needed directly in MainActivity for persistence
 
-class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener { // <--- ADD THIS PART
+class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener {
 
+    private lateinit var viewPager: ViewPager2
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var fabAdd: FloatingActionButton
-    private lateinit var userControl: UserControl // Assuming UserControl is defined elsewhere
+    private lateinit var userControl: UserControl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // REMOVE THIS LINE: FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+
         userControl = UserControl() // Initialize UserControl
 
         setupViews()
+        setupViewPager()
         setupBottomNavigation()
         setupFAB()
 
-        // Load default fragment (Home)
         if (savedInstanceState == null) {
-            loadFragment(HomeFragment())
+            viewPager.currentItem = 0
+            bottomNavigation.selectedItemId = R.id.nav_home
         }
     }
 
     private fun setupViews() {
+        viewPager = findViewById(R.id.view_pager)
         bottomNavigation = findViewById(R.id.bottom_navigation)
         fabAdd = findViewById(R.id.fab_add)
+    }
+
+    private fun setupViewPager() {
+        val pagerAdapter = MainViewPagerAdapter(this)
+        viewPager.adapter = pagerAdapter
+        viewPager.offscreenPageLimit = 2
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                bottomNavigation.selectedItemId = bottomNavigation.menu.getItem(position).itemId
+
+                when (position) {
+                    0 -> showFAB(true)
+                    else -> showFAB(false)
+                }
+            }
+        })
     }
 
     private fun setupBottomNavigation() {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    loadFragment(HomeFragment())
-                    showFAB(true)
+                    viewPager.currentItem = 0
                     true
                 }
                 R.id.nav_history -> {
-                    // Load HistoryFragment or handle history display
-                    showFAB(false)
+                    viewPager.currentItem = 1
                     true
                 }
                 R.id.nav_inventory -> {
-                    // Load InventoryFragment or handle inventory display
-                    showFAB(true)
+                    viewPager.currentItem = 2
                     true
                 }
                 R.id.nav_profile -> {
-                    // Load ProfileFragment or handle profile display
-                    showFAB(false)
+                    viewPager.currentItem = 3
                     true
                 }
                 else -> false
@@ -65,41 +89,46 @@ class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener { //
 
     private fun setupFAB() {
         fabAdd.setOnClickListener {
-            // Handle FAB click based on current fragment
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+            val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
             when (currentFragment) {
                 is HomeFragment -> {
                     showAddInventoryDialog()
                 }
-                // Add more cases for other fragments where the FAB might trigger a different action
-                // is AnotherFragment -> {
-                //     showAnotherDialog()
-                // }
+                else -> { /* ... */ }
             }
         }
     }
 
     private fun showAddInventoryDialog() {
         val dialog = AddInventoryDialog.newInstance()
-        dialog.setOnSaveListener(this) // This line will now work correctly!
+        dialog.setOnSaveListener(this)
         dialog.show(supportFragmentManager, "AddInventoryDialog")
     }
 
-    private fun loadFragment(fragment: Fragment) {
-        // Pass user data to fragment if it's HomeFragment
-        if (fragment is HomeFragment) {
-            val currentUser = userControl.getCurrentUser() // Ensure UserControl.getCurrentUser() returns a non-null value or handle null
-            val bundle = Bundle().apply {
-                putString("user_name", currentUser?.displayName ?: "User")
-                putString("user_email", currentUser?.email ?: "")
-                putString("user_photo_url", currentUser?.photoUrl?.toString() ?: "")
-            }
-            fragment.arguments = bundle
-        }
+    override fun onSaveCargoIn(cargoIn: CargoIn) {
+        // You'll need FirebaseDatabase.getInstance() here to save data, which is fine
+        // as setPersistenceEnabled is now called much earlier in MyApplication's onCreate.
+        com.google.firebase.database.FirebaseDatabase.getInstance().reference
+            .child("barang_masuk")
+            .push()
+            .setValue(cargoIn)
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+        val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
+        if (currentFragment is HomeFragment) {
+            Toast.makeText(this, "Incoming Cargo: ${cargoIn.namaBarang} saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onSaveCargoOut(cargoOut: CargoOut) {
+        com.google.firebase.database.FirebaseDatabase.getInstance().reference
+            .child("barang_keluar")
+            .push()
+            .setValue(cargoOut)
+
+        val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
+        if (currentFragment is HomeFragment) {
+            Toast.makeText(this, "Outgoing Cargo: ${cargoOut.namaBarang} saved!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showFAB(show: Boolean) {
@@ -107,46 +136,6 @@ class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener { //
             fabAdd.show()
         } else {
             fabAdd.hide()
-        }
-    }
-
-    // --- INTERFACE IMPLEMENTATIONS ---
-    // These methods are now properly overriding the interface methods.
-    override fun onSaveCargoIn(cargoIn: CargoIn) {
-        // Handle saving CargoIn data
-        // You can implement your Firebase/database saving logic here
-        // For example:
-        // FirebaseDatabase.getInstance().reference
-        //     .child("cargo_in")
-        //     .child(cargoIn.cargoId)
-        //     .setValue(cargoIn.toMap())
-
-        // You might also want to refresh the current fragment to show new data
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (currentFragment is HomeFragment) {
-            // Refresh the fragment data if needed
-            // currentFragment.refreshData()
-            // To show a simple toast for testing:
-            // Toast.makeText(this, "Incoming Cargo: ${cargoIn.namaBarang} saved!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onSaveCargoOut(cargoOut: CargoOut) {
-        // Handle saving CargoOut data
-        // You can implement your Firebase/database saving logic here
-        // For example:
-        // FirebaseDatabase.getInstance().reference
-        //     .child("cargo_out")
-        //     .child(cargoOut.cargoId)
-        //     .setValue(cargoOut.toMap())
-
-        // You might also want to refresh the current fragment to show new data
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (currentFragment is HomeFragment) {
-            // Refresh the fragment data if needed
-            // currentFragment.refreshData()
-            // To show a simple toast for testing:
-            // Toast.makeText(this, "Outgoing Cargo: ${cargoOut.namaBarang} saved!", Toast.LENGTH_SHORT).show()
         }
     }
 }
