@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.*
 
+
 data class User(
     val userId: String = "",
     val username: String = "",
@@ -14,7 +15,8 @@ data class User(
     val emailUser: String = "",
     val passwordUser: String = "",
     val statusUser: String = "",
-    val role: String = ""
+    val role: String = "",
+    val profileImageUrl: String = "" // Ini yang baru
 )
 
 class UserControl {
@@ -170,6 +172,22 @@ class UserControl {
                     onComplete(false, task.exception)
                 }
             }
+    }
+
+    fun updatePassword(newPassword: String, onComplete: (Boolean, Exception?) -> Unit) {
+        val user = auth.currentUser
+        if (user != null) {
+            user.updatePassword(newPassword)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        onComplete(true, null)
+                    } else {
+                        onComplete(false, task.exception)
+                    }
+                }
+        } else {
+            onComplete(false, Exception("No user is currently signed in"))
+        }
     }
 
     // Delete user account

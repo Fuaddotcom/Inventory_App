@@ -1,32 +1,53 @@
-// com/TI23B1/inventoryapp/MainActivity.kt
 package com.TI23B1.inventoryapp
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.TI23B1.inventoryapp.dialogs.AddInventoryDialog
-import com.TI23B1.inventoryapp.fragments.HistoryFragment
-import com.TI23B1.inventoryapp.fragments.HomeFragment
+// import com.cloudinary.android.MediaManager // REMOVED: Cloudinary import
+// import java.util.HashMap // REMOVED: No longer needed for Cloudinary config
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-// import com.google.firebase.database.FirebaseDatabase // No longer needed directly in MainActivity for persistence
+import com.TI23B1.inventoryapp.data.CargoInRepository
+import com.TI23B1.inventoryapp.data.CargoOutRepository
+import com.TI23B1.inventoryapp.data.InventoryRepository
+import com.TI23B1.inventoryapp.data.InventoryStockRepository
+import com.TI23B1.inventoryapp.dialogs.AddInventoryDialog
+import com.TI23B1.inventoryapp.fragments.HomeFragment
+import com.TI23B1.inventoryapp.models.CargoIn
+import com.TI23B1.inventoryapp.models.CargoOut
+import com.TI23B1.inventoryapp.models.InventoryItem // Needed for InventoryRepository
+import com.TI23B1.inventoryapp.utils.BarcodeUtils
+import com.TI23B1.inventoryapp.utils.PrintUtils
+import com.TI23B1.inventoryapp.utils.StickerPrintData
+
 
 class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener {
+
 
     private lateinit var viewPager: ViewPager2
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var fabAdd: FloatingActionButton
     private lateinit var userControl: UserControl
 
+    private lateinit var cargoInRepository: CargoInRepository
+    private lateinit var cargoOutRepository: CargoOutRepository
+    private lateinit var inventoryStockRepository: InventoryStockRepository
+    private lateinit var inventoryRepository: InventoryRepository
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // REMOVE THIS LINE: FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        userControl = UserControl()
 
-        userControl = UserControl() // Initialize UserControl
+        cargoInRepository = CargoInRepository()
+        cargoOutRepository = CargoOutRepository()
+        inventoryStockRepository = InventoryStockRepository()
+        inventoryRepository = InventoryRepository()
+
+        // REMOVED: initCloudinary() // No Cloudinary init in mobile app
 
         setupViews()
         setupViewPager()
@@ -38,6 +59,8 @@ class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener {
             bottomNavigation.selectedItemId = R.id.nav_home
         }
     }
+
+    // REMOVED: private fun initCloudinary() { ... } // No Cloudinary init
 
     private fun setupViews() {
         viewPager = findViewById(R.id.view_pager)
@@ -89,45 +112,76 @@ class MainActivity : AppCompatActivity(), AddInventoryDialog.OnSaveListener {
 
     private fun setupFAB() {
         fabAdd.setOnClickListener {
-            val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
+            val currentFragmentTag = "f" + viewPager.currentItem
+            val currentFragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
+
             when (currentFragment) {
                 is HomeFragment -> {
                     showAddInventoryDialog()
                 }
-                else -> { /* ... */ }
+                else -> { /* Do nothing or show a message if FAB is clicked on other tabs */ }
             }
         }
     }
 
-    private fun showAddInventoryDialog() {
-        val dialog = AddInventoryDialog.newInstance()
-        dialog.setOnSaveListener(this)
+    private fun showAddInventoryDialog() { // This might be the method you call to open the dialog
+        val dialog = AddInventoryDialog.newInstance(
+            this.inventoryRepository,
+            this.inventoryStockRepository
+        )
+        // Set the listener if your MainActivity implements it
+        // dialog.setOnSaveListener(this) // if MainActivity implements OnSaveListener
         dialog.show(supportFragmentManager, "AddInventoryDialog")
     }
 
-    override fun onSaveCargoIn(cargoIn: CargoIn) {
-        // You'll need FirebaseDatabase.getInstance() here to save data, which is fine
-        // as setPersistenceEnabled is now called much earlier in MyApplication's onCreate.
-        com.google.firebase.database.FirebaseDatabase.getInstance().reference
-            .child("barang_masuk")
-            .push()
-            .setValue(cargoIn)
 
-        val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
-        if (currentFragment is HomeFragment) {
-            Toast.makeText(this, "Incoming Cargo: ${cargoIn.namaBarang} saved!", Toast.LENGTH_SHORT).show()
+    // --- OnSaveListener Implementations (existing) ---
+    override fun onSaveCargoIn(cargoIn: CargoIn) {
+        cargoInRepository.addCargoIn(cargoIn) { success, message ->
+            if (success) {
+                Toast.makeText(this, "Incoming Cargo: ${cargoIn.namaBarang} saved!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Error saving incoming cargo: $message", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     override fun onSaveCargoOut(cargoOut: CargoOut) {
-        com.google.firebase.database.FirebaseDatabase.getInstance().reference
-            .child("barang_keluar")
-            .push()
-            .setValue(cargoOut)
+        cargoOutRepository.addCargoOut(cargoOut) { success, message ->
+            if (success) {
+                inventoryStockRepository.updateStock(
+                    name = cargoOut.namaBarang,
+                    quantityChange = -cargoOut.quantity,
+                    isIncoming = false
+                ) { stockUpdateSuccess, stockUpdateMessage ->
+                    if (stockUpdateSuccess) {
+                        Toast.makeText(this, "Outgoing Cargo: ${cargoOut.namaBarang} saved! Stock updated.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Outgoing Cargo: ${cargoOut.namaBarang} saved! BUT stock update failed: $stockUpdateMessage", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Error saving outgoing cargo: $message", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
-        val currentFragment = (viewPager.adapter as MainViewPagerAdapter).createFragment(viewPager.currentItem)
-        if (currentFragment is HomeFragment) {
-            Toast.makeText(this, "Outgoing Cargo: ${cargoOut.namaBarang} saved!", Toast.LENGTH_SHORT).show()
+    override fun onCargoOutSavedAndReadyForPrint(cargoOut: CargoOut) {
+        val qrCodeContent = "${cargoOut.nomorSuratJalan}|${cargoOut.namaBarang}|${cargoOut.quantity} ${cargoOut.unit}|${cargoOut.tujuanPengiriman}"
+        val qrBitmap = BarcodeUtils.generateQrCodeBitmap(qrCodeContent)
+
+        if (qrBitmap != null) {
+            val stickerData = StickerPrintData(
+                itemName = cargoOut.namaBarang,
+                itemCode = cargoOut.nomorSuratJalan,
+                quantity = "${cargoOut.quantity}(${cargoOut.unit})",
+                destination = cargoOut.tujuanPengiriman,
+                qrCodeBitmap = qrBitmap
+            )
+            val pdfDocument = PrintUtils.createStickerPdf(this, stickerData)
+            PrintUtils.printPdfDocument(this, pdfDocument, "Sticker: ${cargoOut.namaBarang}")
+        } else {
+            Toast.makeText(this, "Failed to generate QR code for printing.", Toast.LENGTH_LONG).show()
         }
     }
 

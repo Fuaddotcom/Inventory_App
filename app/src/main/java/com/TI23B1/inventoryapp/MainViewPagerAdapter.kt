@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.TI23B1.inventoryapp.fragments.HistoryFragment
 import com.TI23B1.inventoryapp.fragments.HomeFragment
+import com.TI23B1.inventoryapp.fragments.InventoryListFragment
+import com.TI23B1.inventoryapp.fragments.UserFragment
+
 // Assuming you have these fragments:
 // import com.TI23B1.inventoryapp.fragments.InventoryFragment
 // import com.TI23B1.inventoryapp.fragments.ProfileFragment
@@ -17,8 +20,8 @@ class MainViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAd
     private val fragments: List<Fragment> = listOf(
         HomeFragment(),        // Corresponds to R.id.nav_home
         HistoryFragment(),     // Corresponds to R.id.nav_history
-        // InventoryFragment(), // Assuming R.id.nav_inventory
-        // ProfileFragment()    // Assuming R.id.nav_profile
+        InventoryListFragment(), // Assuming R.id.nav_inventory
+        UserFragment()
     )
 
     override fun getItemCount(): Int {

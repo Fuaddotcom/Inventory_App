@@ -1,5 +1,7 @@
 package com.TI23B1.inventoryapp
 
+import com.TI23B1.inventoryapp.models.CargoIn
+import com.TI23B1.inventoryapp.models.CargoOut
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 

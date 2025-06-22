@@ -7,8 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -18,14 +18,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.TI23B1.inventoryapp.R
 import com.TI23B1.inventoryapp.adapters.HistoryAdapter
+import com.TI23B1.inventoryapp.data.CargoInRepository
+import com.TI23B1.inventoryapp.data.CargoOutRepository
 import com.TI23B1.inventoryapp.models.HistoryListItem
 import com.TI23B1.inventoryapp.models.RecentItem
-import com.TI23B1.inventoryapp.CargoIn
-import com.TI23B1.inventoryapp.CargoOut
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.TI23B1.inventoryapp.data.HistoryRepository
+import com.TI23B1.inventoryapp.data.InventoryRepository
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,20 +35,18 @@ class HistoryFragment : Fragment() {
     private lateinit var rbFilterIn: RadioButton
     private lateinit var rbFilterOut: RadioButton
     private lateinit var rvHistoryItems: RecyclerView
-
-    private var pendingFirebaseFetches: Int = 0
     private lateinit var btnResetFilter: Button
 
     private lateinit var historyItemsAdapter: HistoryAdapter
     private var masterHistoryList: MutableList<RecentItem> = mutableListOf()
     private var currentFilteredAndHeaderList: MutableList<HistoryListItem> = mutableListOf()
 
-    private val database = FirebaseDatabase.getInstance()
-    private val barangMasukRef = database.getReference("barang_masuk")
-    private val barangKeluarRef = database.getReference("barang_keluar")
+    private val historyRepository = HistoryRepository()
+    private val inventoryRepository = InventoryRepository()
 
     private val TAG = "HistoryFragment"
-    private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.US)
+
+    private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +60,13 @@ class HistoryFragment : Fragment() {
 
         setupViews(view)
         setupRecyclerView()
-        setupListeners() // Ensure this is called
+        setupListeners()
+        loadAllHistoryItems()
+    }
+
+    // NEW: Public method to trigger data refresh
+    fun refreshData() {
+        Log.d(TAG, "refreshData called. Reloading all history items.")
         loadAllHistoryItems()
     }
 
@@ -80,6 +82,7 @@ class HistoryFragment : Fragment() {
 
     private fun setupRecyclerView() {
         historyItemsAdapter = HistoryAdapter(
+            inventoryRepository = inventoryRepository,
             onItemClick = { item: RecentItem ->
                 Toast.makeText(context, "History item clicked: ${item.name}", Toast.LENGTH_SHORT).show()
             },
@@ -90,6 +93,7 @@ class HistoryFragment : Fragment() {
                     }
                     R.id.action_delete -> {
                         Toast.makeText(context, "Delete: ${item.name}", Toast.LENGTH_SHORT).show()
+                        // If you want to enable delete, you'll need a delete method in HistoryRepository
                     }
                 }
             }
@@ -121,82 +125,31 @@ class HistoryFragment : Fragment() {
     }
 
     private fun resetFilters() {
-        etSearchItemName.setText("") // Clear the search text
-        rbFilterAll.isChecked = true // Select the "All" radio button
-        // Calling applyFiltersAndAddHeaders() is handled by the listeners above,
-        // as clearing text and checking a radio button will trigger them.
-        // However, for explicit control, you can call it directly:
+        etSearchItemName.setText("")
+        rbFilterAll.isChecked = true
         applyFiltersAndAddHeaders()
         Toast.makeText(context, "Filters reset!", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadAllHistoryItems() {
-        masterHistoryList.clear() // Clear master list at the very beginning of a full load
-        currentFilteredAndHeaderList.clear() // Also clear the displayed list
-        historyItemsAdapter.submitList(emptyList()) // Clear adapter immediately to show nothing while loading
-        Log.d(TAG, "Starting to load all history items from Firebase...")
+        masterHistoryList.clear()
+        currentFilteredAndHeaderList.clear()
+        historyItemsAdapter.submitList(emptyList())
+        Log.d(TAG, "Starting to load all history items using HistoryRepository...")
 
-        // Reset fetch counter
-        pendingFirebaseFetches = 2 // We have two fetches (barang_masuk and barang_keluar)
-
-        // Fetch barang_masuk items
-        barangMasukRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG, "barang_masuk snapshot exists: ${snapshot.exists()}, children: ${snapshot.childrenCount}")
-                snapshot.children.forEach { dataSnapshot ->
-                    val cargoIn = dataSnapshot.getValue(CargoIn::class.java)
-                    cargoIn?.let {
-                        val recentItem = RecentItem.fromCargoIn(it)
-                        masterHistoryList.add(recentItem)
-                        Log.d(TAG, "Added IN item to master list: ${recentItem.name} (${recentItem.timestamp})")
-                    } ?: run {
-                        Log.e(TAG, "Failed to parse CargoIn for key: ${dataSnapshot.key}, value: ${dataSnapshot.value}")
-                    }
-                }
-                Log.d(TAG, "Finished processing barang_masuk. Master list size: ${masterHistoryList.size}")
-                onFirebaseFetchComplete() // Call completion handler
+        historyRepository.fetchRecentItems(object : HistoryRepository.RecentItemsFetchListener {
+            override fun onRecentItemsFetched(items: List<RecentItem>) {
+                Log.d(TAG, "Recent items fetched from repository. Count: ${items.size}")
+                masterHistoryList.clear()
+                masterHistoryList.addAll(items)
+                applyFiltersAndAddHeaders()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_masuk history: ${error.message}", error.toException())
-                Toast.makeText(context, "Failed to load incoming history.", Toast.LENGTH_SHORT).show()
-                onFirebaseFetchComplete() // Call completion handler even on error
+            override fun onError(errorMessage: String) {
+                Log.e(TAG, "Error fetching history items: $errorMessage")
+                Toast.makeText(context, "Error loading history: $errorMessage", Toast.LENGTH_LONG).show()
             }
         })
-
-        // Fetch barang_keluar items
-        barangKeluarRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG, "barang_keluar snapshot exists: ${snapshot.exists()}, children: ${snapshot.childrenCount}")
-                snapshot.children.forEach { dataSnapshot ->
-                    val cargoOut = dataSnapshot.getValue(CargoOut::class.java)
-                    cargoOut?.let {
-                        val recentItem = RecentItem.fromCargoOut(it)
-                        masterHistoryList.add(recentItem)
-                        Log.d(TAG, "Added OUT item to master list: ${recentItem.name} (${recentItem.timestamp})")
-                    } ?: run {
-                        Log.e(TAG, "Failed to parse CargoOut for key: ${dataSnapshot.key}, value: ${dataSnapshot.value}")
-                    }
-                }
-                Log.d(TAG, "Finished processing barang_keluar. Master list size: ${masterHistoryList.size}")
-                onFirebaseFetchComplete() // Call completion handler
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_keluar history: ${error.message}", error.toException())
-                Toast.makeText(context, "Failed to load outgoing history.", Toast.LENGTH_SHORT).show()
-                onFirebaseFetchComplete() // Call completion handler even on error
-            }
-        })
-    }
-
-    // New helper to ensure filters are applied only after ALL initial data is loaded
-    private fun onFirebaseFetchComplete() {
-        pendingFirebaseFetches--
-        if (pendingFirebaseFetches <= 0) {
-            Log.d(TAG, "All Firebase fetches complete. Final master list size: ${masterHistoryList.size}")
-            applyFiltersAndAddHeaders() // Now apply filters to the fully loaded master list
-        }
     }
 
     private fun applyFiltersAndAddHeaders() {
@@ -231,22 +184,13 @@ class HistoryFragment : Fragment() {
 
             val matchesType = when (selectedFilterType) {
                 "ALL" -> true
-                "IN" -> {
-                    val isIncoming = item.type == "IN"
-                    Log.d(TAG, "Item ${item.name} type: ${item.type}, Matches IN: $isIncoming")
-                    isIncoming
-                }
-                "OUT" -> {
-                    val isOutgoing = item.type == "OUT"
-                    Log.d(TAG, "Item ${item.name} type: ${item.type}, Matches OUT: $isOutgoing")
-                    isOutgoing
-                }
+                "IN" -> item.type == "IN"
+                "OUT" -> item.type == "OUT"
                 else -> true
             }
             matchesName && matchesType
         }.sortedByDescending { it.timestamp }
 
-        // Clear the list that goes to the adapter BEFORE populating it
         currentFilteredAndHeaderList.clear()
         var lastDate: String? = null
 
@@ -255,7 +199,8 @@ class HistoryFragment : Fragment() {
         }
 
         filteredItems.forEach { item ->
-            val itemDate = displayDateFormat.format(Date(item.timestamp))
+            val itemDate = displayDateFormat.format(Date(item.timestamp ?: 0L))
+
             if (itemDate != lastDate) {
                 currentFilteredAndHeaderList.add(HistoryListItem.DateHeader(itemDate))
                 lastDate = itemDate
@@ -265,7 +210,8 @@ class HistoryFragment : Fragment() {
             Log.d(TAG, "Added item to displayed list: ${item.name} (${item.type})")
         }
 
-        historyItemsAdapter.submitList(currentFilteredAndHeaderList.toList()) // Convert to immutable list for submitList
+        historyItemsAdapter.submitList(currentFilteredAndHeaderList.toList())
         Log.d(TAG, "Filtered list with headers submitted. Displaying ${currentFilteredAndHeaderList.size} items (including headers).")
     }
+
 }

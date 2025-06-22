@@ -1,7 +1,5 @@
 package com.TI23B1.inventoryapp.models
 
-import com.TI23B1.inventoryapp.CargoIn
-import com.TI23B1.inventoryapp.CargoOut
 import com.google.firebase.database.DataSnapshot
 import java.text.SimpleDateFormat
 import android.util.Log

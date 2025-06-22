@@ -1,23 +1,28 @@
-// com/TI23B1/inventoryapp/adapters/HistoryAdapter.kt
 package com.TI23B1.inventoryapp.adapters
 
+import android.util.Log // Add for logging
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton // Changed from View to ImageButton for clarity
+import android.widget.ImageButton
+import android.widget.ImageView // Import ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.TI23B1.inventoryapp.R
+import com.TI23B1.inventoryapp.data.InventoryRepository // Import InventoryRepository
 import com.TI23B1.inventoryapp.models.HistoryListItem
 import com.TI23B1.inventoryapp.models.RecentItem
+import com.bumptech.glide.Glide // Import Glide
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HistoryAdapter(
+    // Add InventoryRepository to the constructor
+    private val inventoryRepository: InventoryRepository,
     private val onItemClick: (RecentItem) -> Unit,
     private val onMoreOptionsClick: (RecentItem, MenuItem) -> Unit
 ) : ListAdapter<HistoryListItem, RecyclerView.ViewHolder>(HistoryDiffCallback()) {
@@ -25,7 +30,7 @@ class HistoryAdapter(
     companion object {
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_ITEM = 1
-        private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.US)
+        private val displayDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.US) // Corrected "yyyy"
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -44,7 +49,8 @@ class HistoryAdapter(
             }
             VIEW_TYPE_ITEM -> {
                 val view = inflater.inflate(R.layout.item_recent, parent, false)
-                HistoryItemViewHolder(view)
+                // Pass inventoryRepository to HistoryItemViewHolder
+                HistoryItemViewHolder(view, inventoryRepository)
             }
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
@@ -73,34 +79,46 @@ class HistoryAdapter(
     }
 
     // ViewHolder for History Item (item_recent.xml)
-    class HistoryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class HistoryItemViewHolder(itemView: View, private val inventoryRepository: InventoryRepository) : RecyclerView.ViewHolder(itemView) {
         private val tvItemName: TextView = itemView.findViewById(R.id.tv_item_name)
-        private val tvItemType: TextView = itemView.findViewById(R.id.tv_item_type) // This is your type TextView
-        private val tvItemStock: TextView = itemView.findViewById(R.id.tv_item_stock) // This is your stock TextView
-        private val btnMoreOptions: ImageButton = itemView.findViewById(R.id.btn_more_options) // This is your ImageButton for options
+        private val tvItemType: TextView = itemView.findViewById(R.id.tv_item_type)
+        private val tvItemStock: TextView = itemView.findViewById(R.id.tv_item_stock)
+        private val btnMoreOptions: ImageButton = itemView.findViewById(R.id.btn_more_options)
+        private val ivItemImage: ImageView = itemView.findViewById(R.id.iv_item_image) // Initialize ImageView
 
         fun bind(item: RecentItem, onItemClick: (RecentItem) -> Unit, onMoreOptionsClick: (RecentItem, MenuItem) -> Unit) {
             tvItemName.text = item.name
-            // For stock, you're displaying "quantity unit", so we'll combine them here
             tvItemStock.text = "${item.stock} ${item.unit}"
-            tvItemType.text = if (item.type == "IN") "Masuk" else "Keluar" // Display "Masuk" or "Keluar"
+            tvItemType.text = if (item.type == "IN") "Masuk" else "Keluar"
 
-            // Set color for IN/OUT type using your existing drawables if available
-            // You have bg_status_in and presumably bg_status_out
             when (item.type) {
                 "IN" -> tvItemType.setBackgroundResource(R.drawable.bg_status_in)
-                "OUT" -> tvItemType.setBackgroundResource(R.drawable.bg_status_out) // Assuming you have bg_status_out
-                else -> tvItemType.setBackgroundResource(android.R.color.darker_gray) // Fallback
+                "OUT" -> tvItemType.setBackgroundResource(R.drawable.bg_status_out)
+                else -> tvItemType.setBackgroundResource(android.R.color.darker_gray)
             }
-            // Ensure text color is set if your drawables don't define it
             tvItemType.setTextColor(itemView.context.getColor(android.R.color.white))
 
+            // --- GLIDE IMAGE LOADING LOGIC ---
+            inventoryRepository.getInventoryItemByNamaBarang(item.name) { inventoryItem ->
+                if (inventoryItem != null && !inventoryItem.image_url.isNullOrEmpty()) {
+                    Log.d("HistoryAdapter", "Found InventoryItem for '${item.name}': ImageURL='${inventoryItem.image_url}'")
+                    Glide.with(ivItemImage.context)
+                        .load(inventoryItem.image_url)
+                        .placeholder(R.drawable.ic_placeholder_foreground)
+                        .error(R.drawable.ic_placeholder_foreground) // Show placeholder on error too
+                        .into(ivItemImage)
+                } else {
+                    Log.w("HistoryAdapter", "No InventoryItem or empty imageUrl found for: ${item.name}. Showing placeholder.")
+                    ivItemImage.setImageResource(R.drawable.ic_placeholder_foreground)
+                }
+            }
+            // --- END GLIDE IMAGE LOADING LOGIC ---
 
             itemView.setOnClickListener { onItemClick(item) }
 
-            btnMoreOptions.setOnClickListener { view -> // Use btnMoreOptions
+            btnMoreOptions.setOnClickListener { view ->
                 PopupMenu(view.context, view).apply {
-                    inflate(R.menu.item_options_menu) // Use your existing menu
+                    inflate(R.menu.item_options_menu)
                     setOnMenuItemClickListener { menuItem ->
                         onMoreOptionsClick(item, menuItem)
                         true
@@ -117,13 +135,12 @@ class HistoryDiffCallback : DiffUtil.ItemCallback<HistoryListItem>() {
             oldItem is HistoryListItem.DateHeader && newItem is HistoryListItem.DateHeader ->
                 oldItem.date == newItem.date
             oldItem is HistoryListItem.HistoryItem && newItem is HistoryListItem.HistoryItem ->
-                // Using cargoId as the stable ID for HistoryItem
                 oldItem.recentItem.cargoId == newItem.recentItem.cargoId
             else -> false
         }
     }
 
     override fun areContentsTheSame(oldItem: HistoryListItem, newItem: HistoryListItem): Boolean {
-        return oldItem == newItem // Data classes automatically provide equals() based on content
+        return oldItem == newItem
     }
 }

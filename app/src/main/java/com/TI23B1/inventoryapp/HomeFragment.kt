@@ -16,39 +16,49 @@ import androidx.recyclerview.widget.RecyclerView
 import com.TI23B1.inventoryapp.R
 import com.TI23B1.inventoryapp.adapters.RecentItemsAdapter
 import com.TI23B1.inventoryapp.models.RecentItem
-import com.TI23B1.inventoryapp.CargoIn
-import com.TI23B1.inventoryapp.CargoOut
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.TI23B1.inventoryapp.UserControl
+import com.TI23B1.inventoryapp.data.CargoInRepository
+import com.TI23B1.inventoryapp.data.CargoOutRepository
+import com.TI23B1.inventoryapp.data.InventoryRepository
+import com.TI23B1.inventoryapp.data.InventoryStockRepository
+import com.TI23B1.inventoryapp.dialogs.AddInventoryDialog
+import com.TI23B1.inventoryapp.data.HistoryRepository
+import com.TI23B1.inventoryapp.models.CargoIn
+import com.TI23B1.inventoryapp.models.CargoOut
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.ValueEventListener
 import java.util.*
 
-class HomeFragment : Fragment() {
+
+class HomeFragment : Fragment(), AddInventoryDialog.OnSaveListener {
 
     private lateinit var tvGreeting: TextView
     private lateinit var tvUsername: TextView
     private lateinit var tvBarangMasukCount: TextView
     private lateinit var tvBarangKeluarCount: TextView
-    private lateinit var cardBarangMasuk: CardView
-    private lateinit var cardBarangKeluar: CardView
     private lateinit var rvRecentItems: RecyclerView
     private lateinit var ivProfile: ImageView
+    private lateinit var cardBarangMasuk: CardView
+    private lateinit var cardBarangKeluar: CardView
+
+    private lateinit var fabAdd: FloatingActionButton
+
+    private val inventoryRepository = InventoryRepository()
+    private val cargoInRepository = CargoInRepository()
+    private val cargoOutRepository = CargoOutRepository()
+    private val historyRepository = HistoryRepository()
+    private val inventoryStockRepository = InventoryStockRepository()
 
     private lateinit var recentItemsAdapter: RecentItemsAdapter
 
-    // User data
     private var userName: String? = null
     private var userEmail: String? = null
     private var userPhotoUrl: String? = null
 
-    // Firebase Database reference
-    private val database = FirebaseDatabase.getInstance()
-    private val barangMasukRef = database.getReference("barang_masuk")
-    private val barangKeluarRef = database.getReference("barang_keluar")
+    private var barangMasukCountListener: ValueEventListener? = null
+    private var barangKeluarCountListener: ValueEventListener? = null
 
-    // Tag for logging
-    private val TAG = "HomeFragment"
+    private lateinit var userControl: UserControl
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,8 +79,17 @@ class HomeFragment : Fragment() {
 
         setupViews(view)
         setupRecyclerView()
-        setupClickListeners()
+
+        userControl = UserControl()
+
         loadData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        barangMasukCountListener?.let { historyRepository.removeBarangMasukCountListener(it) }
+        barangKeluarCountListener?.let { historyRepository.removeBarangKeluarCountListener(it) }
+        Log.d("HomeFragment", "Firebase listeners removed in onDestroyView.")
     }
 
     private fun setupViews(view: View) {
@@ -78,37 +97,35 @@ class HomeFragment : Fragment() {
         tvUsername = view.findViewById(R.id.tv_username)
         tvBarangMasukCount = view.findViewById(R.id.tv_barang_masuk_count)
         tvBarangKeluarCount = view.findViewById(R.id.tv_barang_keluar_count)
-        cardBarangMasuk = view.findViewById(R.id.card_barang_masuk)
-        cardBarangKeluar = view.findViewById(R.id.card_barang_keluar)
         rvRecentItems = view.findViewById(R.id.rv_recent_items)
         ivProfile = view.findViewById(R.id.iv_profile)
+
+        cardBarangMasuk = view.findViewById(R.id.card_barang_masuk)
+        cardBarangKeluar = view.findViewById(R.id.card_barang_keluar)
+
+        fabAdd = activity?.findViewById(R.id.fab_add) ?: throw IllegalStateException(
+            "Floating Action Button with ID fab_add not found in activity layout. " +
+                    "Ensure it's in your activity_main.xml or equivalent host activity layout."
+        )
+
+        fabAdd.setOnClickListener {
+            Log.d("HomeFragment", "FAB Add clicked. Showing AddInventoryDialog.")
+            showAddInventoryDialog()
+        }
     }
 
     private fun setupRecyclerView() {
         recentItemsAdapter = RecentItemsAdapter(
+            inventoryRepository = inventoryRepository,
             onMoreOptionsClick = { item: RecentItem, menuItem: MenuItem ->
                 when (menuItem.itemId) {
                     R.id.action_details -> {
                         Toast.makeText(context, "Details for: ${item.name}", Toast.LENGTH_SHORT).show()
-                        when (item.type) {
-                            "IN" -> {
-                                // Navigate to incoming goods detail
-                                // findNavController().navigate(
-                                //     R.id.action_home_to_incoming_detail,
-                                //     bundleOf("cargoId" to item.cargoId)
-                                // )
-                            }
-                            "OUT" -> {
-                                // Navigate to outgoing goods detail
-                                // findNavController().navigate(
-                                //     R.id.action_home_to_outgoing_detail,
-                                //     bundleOf("cargoId" to item.cargoId)
-                                // )
-                            }
-                        }
+                        Log.d("HomeFragment", "Details action clicked for: ${item.name}")
                     }
                     R.id.action_delete -> {
                         Toast.makeText(context, "Delete: ${item.name}", Toast.LENGTH_SHORT).show()
+                        Log.d("HomeFragment", "Delete action clicked for: ${item.name}")
                     }
                 }
             }
@@ -122,116 +139,68 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupClickListeners() {
-        cardBarangMasuk.setOnClickListener {
-            // navigate
-        }
-        cardBarangKeluar.setOnClickListener {
-            // navigate
-        }
-    }
-
     private fun loadData() {
         tvGreeting.text = getTimeBasedGreeting()
-        tvUsername.text = userName ?: "User Name"
+
+        val firebaseUser = userControl.getCurrentUser()
+
+        if (firebaseUser != null) {
+            userControl.readUserData(firebaseUser.uid) { userFromDb ->
+                if (userFromDb != null) {
+                    userName = userFromDb.username
+                    tvUsername.text = userName
+                    Log.d("HomeFragment", "User data loaded: Username=${userName}")
+                } else {
+                    tvUsername.text = "Pengguna Tidak Ditemukan"
+                    Log.w("HomeFragment", "User data not found in DB for UID: ${firebaseUser.uid}")
+                }
+            }
+        } else {
+            tvUsername.text = "Silakan Masuk"
+            Log.d("HomeFragment", "No Firebase user currently logged in.")
+        }
+
         updateDashboardCounts()
         loadRecentItemsFromFirebase()
     }
 
     private fun updateDashboardCounts() {
-        Log.d(TAG, "Fetching dashboard counts...")
-        barangMasukRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val count = snapshot.childrenCount.toInt()
+        barangMasukCountListener = historyRepository.listenToBarangMasukCount(object : HistoryRepository.CountUpdateListener {
+            override fun onCountUpdated(count: Int) {
                 tvBarangMasukCount.text = count.toString()
+                Log.d("HomeFragment", "Barang Masuk Count Updated: $count")
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_masuk count: ${error.message}", error.toException())
+            override fun onError(errorMessage: String) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e("HomeFragment", "Error updating Barang Masuk count: $errorMessage")
             }
         })
 
-        barangKeluarRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG, "barang_keluar snapshot exists: ${snapshot.exists()}")
-                Log.d(TAG, "barang_keluar children count: ${snapshot.childrenCount}")
-                val count = snapshot.childrenCount.toInt()
+        barangKeluarCountListener = historyRepository.listenToBarangKeluarCount(object : HistoryRepository.CountUpdateListener {
+            override fun onCountUpdated(count: Int) {
                 tvBarangKeluarCount.text = count.toString()
+                Log.d("HomeFragment", "Barang Keluar Count Updated: $count")
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_keluar count: ${error.message}", error.toException())
+            override fun onError(errorMessage: String) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e("HomeFragment", "Error updating Barang Keluar count: $errorMessage")
             }
         })
     }
 
     private fun loadRecentItemsFromFirebase() {
-        val recentItemsList = mutableListOf<RecentItem>()
-        Log.d(TAG, "Starting to load recent items from Firebase...")
-
-        // Fetch barang_masuk items, ordered by tanggalMasuk
-        barangMasukRef.orderByChild("tanggalMasuk").limitToLast(5).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG, "barang_masuk recent items snapshot exists: ${snapshot.exists()}")
-                Log.d(TAG, "barang_masuk recent items children count: ${snapshot.childrenCount}")
-                snapshot.children.forEach { dataSnapshot ->
-                    Log.d(TAG, "Processing barang_masuk child: ${dataSnapshot.key}, value: ${dataSnapshot.value}")
-                    val cargoIn = dataSnapshot.getValue(CargoIn::class.java)
-                    if (cargoIn == null) {
-                        Log.e(TAG, "Failed to parse CargoIn for key: ${dataSnapshot.key}. Raw value: ${dataSnapshot.value}")
-                    } else {
-                        val recentItem = RecentItem.fromCargoIn(cargoIn)
-                        recentItemsList.add(recentItem)
-                        Log.d(TAG, "Added IN item: ${recentItem.name}, stock: ${recentItem.stock}, timestamp: ${recentItem.timestamp}")
-                    }
-                }
-                Log.d(TAG, "Finished processing barang_masuk items. Current recentItemsList size: ${recentItemsList.size}")
-                fetchBarangKeluarItems(recentItemsList)
+        historyRepository.fetchRecentItems(object : HistoryRepository.RecentItemsFetchListener {
+            override fun onRecentItemsFetched(items: List<RecentItem>) {
+                recentItemsAdapter.submitList(items)
+                Log.d("HomeFragment", "Fetched ${items.size} recent items.")
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_masuk recent items: ${error.message}", error.toException())
-                fetchBarangKeluarItems(recentItemsList) // Still try to fetch outgoing if incoming fails
-            }
-        })
-    }
-
-    private fun fetchBarangKeluarItems(currentRecentItems: MutableList<RecentItem>) {
-        Log.d(TAG, "Starting to fetch barang_keluar items. Current list size: ${currentRecentItems.size}")
-        barangKeluarRef.orderByChild("tanggalKeluar").limitToLast(5).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG, "barang_keluar recent items snapshot exists: ${snapshot.exists()}")
-                Log.d(TAG, "barang_keluar recent items children count: ${snapshot.childrenCount}")
-                snapshot.children.forEach { dataSnapshot ->
-                    Log.d(TAG, "Processing barang_keluar child: ${dataSnapshot.key}, value: ${dataSnapshot.value}")
-                    val cargoOut = dataSnapshot.getValue(CargoOut::class.java)
-                    if (cargoOut == null) {
-                        Log.e(TAG, "Failed to parse CargoOut for key: ${dataSnapshot.key}. Raw value: ${dataSnapshot.value}")
-                    } else {
-                        val recentItem = RecentItem.fromCargoOut(cargoOut)
-                        currentRecentItems.add(recentItem)
-                        Log.d(TAG, "Added OUT item: ${recentItem.name}, stock: ${recentItem.stock}, timestamp: ${recentItem.timestamp}")
-                    }
-                }
-                Log.d(TAG, "Finished processing barang_keluar items. Final recentItemsList size: ${currentRecentItems.size}")
-
-                // Sort the combined list by timestamp (most recent first)
-                val sortedList = currentRecentItems.sortedByDescending { it.timestamp }
-                Log.d(TAG, "Sorted recentItemsList size: ${sortedList.size}")
-                sortedList.forEach { Log.d(TAG, "Sorted item: ${it.name} (${it.type}) - ${it.timestamp}") }
-
-                recentItemsAdapter.submitList(sortedList)
-                Log.d(TAG, "Submitted list to adapter.")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Failed to read barang_keluar recent items: ${error.message}", error.toException())
-                Toast.makeText(context, "Gagal Memuat Barang Keluar", Toast.LENGTH_SHORT).show()
-                // Still sort and submit what we have if outgoing fails
-                val sortedList = currentRecentItems.sortedByDescending { it.timestamp }
-                Log.d(TAG, "Sorted recentItemsList (onCancelled) size: ${sortedList.size}")
-                recentItemsAdapter.submitList(sortedList)
-                Log.d(TAG, "Submitted list to adapter (onCancelled).")
+            override fun onError(errorMessage: String) {
+                Toast.makeText(context, "Error loading recent items: $errorMessage", Toast.LENGTH_SHORT).show()
+                recentItemsAdapter.submitList(emptyList())
+                Log.e("HomeFragment", "Error fetching recent items: ${errorMessage}")
             }
         })
     }
@@ -245,5 +214,55 @@ class HomeFragment : Fragment() {
             in 15..18 -> "Selamat Sore,"
             else -> "Selamat Malam,"
         }
+    }
+
+    private fun showAddInventoryDialog() {
+        val dialog = AddInventoryDialog.newInstance(
+            inventoryRepository,
+            inventoryStockRepository
+        )
+        dialog.setOnSaveListener(this)
+        dialog.show(childFragmentManager, "AddInventoryDialog")
+        Log.d("HomeFragment", "AddInventoryDialog shown from FAB.")
+    }
+
+    override fun onSaveCargoIn(cargoIn: CargoIn) {
+        Log.d("HomeFragment", "onSaveCargoIn triggered for item: ${cargoIn.namaBarang}, qty: ${cargoIn.quantity}")
+        cargoInRepository.addCargoIn(cargoIn) { saveSuccess, saveErrorMessage ->
+            if (saveSuccess) {
+                Toast.makeText(context, "Cargo In saved and stock updated!", Toast.LENGTH_SHORT).show()
+                Log.d("HomeFragment", "Cargo In record saved successfully. Stock update handled by repository.")
+                loadData() // Refresh counts and recent items for HomeFragment
+                // NEW: Notify HistoryFragment to refresh
+                (parentFragmentManager.findFragmentByTag("HistoryFragmentTag") as? HistoryFragment)?.refreshData()
+                Log.d("HomeFragment", "Attempted to notify HistoryFragment to refresh.")
+            } else {
+                Toast.makeText(context, "Error saving Cargo In record: ${saveErrorMessage}", Toast.LENGTH_LONG).show()
+                Log.e("HomeFragment", "Cargo In record save FAILED: ${saveErrorMessage}")
+            }
+        }
+    }
+
+    override fun onSaveCargoOut(cargoOut: CargoOut) {
+        Log.d("HomeFragment", "onSaveCargoOut triggered for item: ${cargoOut.namaBarang}, qty: ${cargoOut.quantity}")
+        cargoOutRepository.addCargoOut(cargoOut) { saveSuccess, saveErrorMessage ->
+            if (saveSuccess) {
+                Toast.makeText(context, "Cargo Out saved and stock updated!", Toast.LENGTH_SHORT).show()
+                Log.d("HomeFragment", "Cargo Out record saved successfully. Stock update handled by repository.")
+                loadData() // Refresh counts and recent items for HomeFragment
+                // NEW: Notify HistoryFragment to refresh
+                (parentFragmentManager.findFragmentByTag("HistoryFragmentTag") as? HistoryFragment)?.refreshData()
+                Log.d("HomeFragment", "Attempted to notify HistoryFragment to refresh.")
+                onCargoOutSavedAndReadyForPrint(cargoOut)
+            } else {
+                Toast.makeText(context, "Error saving Cargo Out record: ${saveErrorMessage}", Toast.LENGTH_LONG).show()
+                Log.e("HomeFragment", "Cargo Out record save FAILED: ${saveErrorMessage}")
+            }
+        }
+    }
+
+    override fun onCargoOutSavedAndReadyForPrint(cargoOut: CargoOut) {
+        Toast.makeText(context, "Cargo Out for ${cargoOut.namaBarang} is ready for printing. SJ: ${cargoOut.nomorSuratJalan}", Toast.LENGTH_LONG).show()
+        Log.d("HomeFragment", "Cargo Out ready for print callback triggered for: ${cargoOut.namaBarang}")
     }
 }

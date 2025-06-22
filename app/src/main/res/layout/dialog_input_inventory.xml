@@ -81,35 +81,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- ID Barang -->
-            <com.google.android.material.textfield.TextInputLayout
+
+            <Spinner
+                android:id="@+id/spinner_nama_barang"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:minHeight="48dp"
+                android:background="@drawable/spinner_border"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_id_barang"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="ID Barang" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Nama Barang -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_layout_new_nama_barang"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:hint="Masukkan Nama Barang Baru"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_nama_barang"
+                    android:id="@+id/et_new_nama_barang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nama Barang" />
-
+                    android:inputType="textCapWords"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <ProgressBar
+                android:id="@+id/pb_loading_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"/>
 
             <!-- Kode Barang with QR Scanner -->
             <LinearLayout
